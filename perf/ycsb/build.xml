@@ -21,20 +21,21 @@
 	<!-- set global properties for this build -->
 	<property name="DEST" value="${BUILD_ROOT}/perf/ycsb" />
 	<property name="SRC" location="." />
+	<property name="YCSB_VERSION" value="0.17.0" />
+	<property name="TAR_NAME" value="ycsb-${YCSB_VERSION}.tar.gz"/>
 	
 	<target name="init">
 		<mkdir dir="${DEST}" />
 	</target>
 
 	<target name="getYCSB" depends="init">
-		<var name="TAR_NAME" value="ycsb-0.17.0.tar.gz"/>
 		<if>
 		    <available file="${TAR_NAME}" type="file" />
 		    <then>
 		        <echo message="${TAR_NAME} exists. Hence, not downloading it." />
 		    </then>
 		    <else>
-				<var name="curl_options" value="-O --location https://github.com/brianfrankcooper/YCSB/releases/download/0.17.0/ycsb-0.17.0.tar.gz -o ${DEST}/${TAR_NAME}"/>
+				<var name="curl_options" value="-O --location https://github.com/brianfrankcooper/YCSB/releases/download/${YCSB_VERSION}/${TAR_NAME} -o ${DEST}/${TAR_NAME}"/>
 				<retry retrycount="3">
 		 			<sequential>
 						<echo message="curl ${curl_options}" />
@@ -48,8 +49,8 @@
 	</target>	
 
 	<target name="dist" depends="getYCSB" description="generate the distribution">
-	    <gunzip src="ycsb-0.17.0.tar.gz"/>
-		<untar src="ycsb-0.17.0.tar" dest="${DEST}"/>
+	    <gunzip src="${TAR_NAME}"/>
+		<untar src="ycsb-${YCSB_VERSION}.tar" dest="${DEST}"/>
 	</target>
 
 	<target name="getPropFiles" depends="dist">

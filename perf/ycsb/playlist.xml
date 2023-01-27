@@ -18,7 +18,8 @@
 	<include>../perf.mk</include>
 	<test>
 		<testCaseName>ycsb-azurecosmos-load</testCaseName>
-		<command>$(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) load azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q)</command> 
+		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) load azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q); \
+		$(TEST_STATUS)</command> 
 		<levels>
 			<level>sanity</level>
 		</levels>
@@ -28,7 +29,8 @@
 	</test>
 	<test>
 		<testCaseName>ycsb-azurecosmos-sanity</testCaseName>
-		<command>$(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) run azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q) -p operationcount=100</command> 
+		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) run azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q) -p operationcount=100; \
+		$(TEST_STATUS)</command> 
 		<levels>
 			<level>sanity</level>
 		</levels>
@@ -38,7 +40,8 @@
 	</test>
 	<test>
 		<testCaseName>ycsb-azurecosmos</testCaseName>
-		<command>$(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) run azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q)</command> 
+		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) run azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q); \
+		$(TEST_STATUS)</command> 
 		<levels>
 			<level>extended</level>
 		</levels>
