@@ -1,5 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-
 <!--
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,13 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 -->
-
-<playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../TKG/playlist.xsd">
+<playlist
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../TKG/playlist.xsd">
 	<include>../perf.mk</include>
+	<include>./testenv.mk</include>
 	<test>
 		<testCaseName>ycsb-azurecosmos-load</testCaseName>
-		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) load azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q); \
-		$(TEST_STATUS)</command> 
+		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-$(YCSB_VERSION)/bin/ycsb.sh$(Q) load azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-$(YCSB_VERSION)/workloads/$(YCSB_WORKLOAD)$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q); \
+		$(TEST_STATUS)</command>
 		<levels>
 			<level>sanity</level>
 		</levels>
@@ -29,8 +29,8 @@
 	</test>
 	<test>
 		<testCaseName>ycsb-azurecosmos-sanity</testCaseName>
-		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) run azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q) -p operationcount=100; \
-		$(TEST_STATUS)</command> 
+		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-$(YCSB_VERSION)/bin/ycsb.sh$(Q) run azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-$(YCSB_VERSION)/workloads/$(YCSB_WORKLOAD)$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q) -p operationcount=100; \
+		$(TEST_STATUS)</command>
 		<levels>
 			<level>sanity</level>
 		</levels>
@@ -40,8 +40,8 @@
 	</test>
 	<test>
 		<testCaseName>ycsb-azurecosmos</testCaseName>
-		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/bin/ycsb.sh$(Q) run azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-0.17.0/workloads/workloadc$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q); \
-		$(TEST_STATUS)</command> 
+		<command>bash $(Q)$(TEST_RESROOT)$(D)ycsb-$(YCSB_VERSION)/bin/ycsb.sh$(Q) run azurecosmos -P $(Q)$(TEST_RESROOT)$(D)ycsb-$(YCSB_VERSION)/workloads/$(YCSB_WORKLOAD)$(Q) -P $(Q)$(TEST_RESROOT)$(D)azurecosmos.properties$(Q); \
+		$(TEST_STATUS)</command>
 		<levels>
 			<level>extended</level>
 		</levels>
