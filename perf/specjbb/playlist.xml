@@ -16,7 +16,7 @@
     <include>run/testenv.mk</include>
     <test>
         <testCaseName>specjbb-multijvm-simple</testCaseName>
-        <command>source $(RUN_OPTIONS)/specjbb-multijvm-simple.sh; bash $(RUN_SCRIPTS)/run_multi.sh; $(TEST_STATUS)</command>
+        <command>. $(RUN_OPTIONS)/specjbb-multijvm-simple.sh; bash $(RUN_SCRIPTS)/run_multi.sh; $(TEST_STATUS)</command>
         <levels>
             <level>extended</level>
         </levels>
