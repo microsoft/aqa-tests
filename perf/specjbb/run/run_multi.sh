@@ -27,7 +27,7 @@ for ((n=1; $n<=$NUM_OF_RUNS; n=$n+1)); do
   JAVA="${JAVA%\"}"
   JAVA="${JAVA#\"}"
   echo "Start Controller JVM"
-  $JAVA $JAVA_OPTS_C $SPECJBB_OPTS_C -jar $SPECJBB_JAR -m MULTICONTROLLER $MODE_ARGS_C 2>controller.log
+  $JAVA $JAVA_OPTS_C $SPECJBB_OPTS_C -jar $SPECJBB_JAR -m MULTICONTROLLER $MODE_ARGS_C 2>controller.log 2>&1 | tee controller.out &
 
   CTRL_PID=$!
   echo "Controller PID = $CTRL_PID"
@@ -64,6 +64,7 @@ for ((n=1; $n<=$NUM_OF_RUNS; n=$n+1)); do
 
   echo
   echo "SPECjbb2015 is running..."
+  echo "Please monitor $result/controller.out for progress"
 
   wait $CTRL_PID
   echo
