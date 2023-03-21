@@ -29,7 +29,7 @@
 	</test>
 	<test>
 		<testCaseName>tfb-spring</testCaseName>
-		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) --test spring $(Q)$(EXTRA_DOCKER_ARGS)$(Q); \
+		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) $(Q)$(EXTRA_DOCKER_ARGS)$(Q) --test spring; \
 		cp -r $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks$(D)results$(Q) $(Q)$(REPORTDIR)$(Q); \
 		$(TEST_STATUS)</command>
 		<levels>
