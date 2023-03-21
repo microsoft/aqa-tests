@@ -17,7 +17,7 @@
 	<include>../perf.mk</include>
 	<test>
 		<testCaseName>tfb-spring-verify</testCaseName>
-		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) --mode verify --test spring $(Q)$(EXTRA_DOCKER_ARGS)$(Q); \
+		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) --mode verify --test spring $(EXTRA_DOCKER_ARGS); \
 		cp -r $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks$(D)results$(Q) $(Q)$(REPORTDIR)$(Q); \
 		$(TEST_STATUS)</command>
 		<levels>
@@ -29,7 +29,7 @@
 	</test>
 	<test>
 		<testCaseName>tfb-spring</testCaseName>
-		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) $(EXTRA_DOCKER_ARGS) --test spring; \
+		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) --test spring $(EXTRA_DOCKER_ARGS); \
 		cp -r $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks$(D)results$(Q) $(Q)$(REPORTDIR)$(Q); \
 		$(TEST_STATUS)</command>
 		<levels>
@@ -41,7 +41,7 @@
 	</test>
 	<test>
 		<testCaseName>tfb-jetty-verify</testCaseName>
-		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) --mode verify --test jetty $(Q)$(EXTRA_DOCKER_ARGS)$(Q); \
+		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) --mode verify --test jetty $(EXTRA_DOCKER_ARGS); \
 		cp -r $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks$(D)results$(Q) $(Q)$(REPORTDIR)$(Q); \
 		$(TEST_STATUS)</command>
 		<levels>
@@ -53,7 +53,7 @@
 	</test>
 	<test>
 		<testCaseName>tfb-jetty</testCaseName>
-		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) --test jetty $(Q)$(EXTRA_DOCKER_ARGS)$(Q); \
+		<command>bash $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks/tfb$(Q) --test jetty $(EXTRA_DOCKER_ARGS); \
 		cp -r $(Q)$(TEST_RESROOT)$(D)FrameworkBenchmarks$(D)results$(Q) $(Q)$(REPORTDIR)$(Q); \
 		$(TEST_STATUS)</command>
 		<levels>
