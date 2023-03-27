@@ -161,7 +161,7 @@
 	</test>
 	<test>
 		<testCaseName>renaissance-jmh-naive-bayes</testCaseName>
-		<command>$(JAVA_COMMAND) $(JVM_OPTIONS) -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 10 -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)naive-bayes.json$(Q) naive-bayes; \
+		<command>$(JAVA_COMMAND) $(JVM_OPTIONS) -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 10 -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)NaiveBayes.json$(Q) NaiveBayes; \
 		$(TEST_STATUS)</command>
 		<levels>
 			<level>sanity</level>
