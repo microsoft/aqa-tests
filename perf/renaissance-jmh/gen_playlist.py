@@ -15,9 +15,10 @@
 </playlist>
 '''
 
-benches= ["AkkaUct", "Reactors", "Als", "ChiSquare", "DecTree", "GaussMix", "LogRegression", "MovieLens", "NaiveBayes", "PageRank",
-            "FjKmeans", "FutureGenetic", "Mnemonics", "ParMnemonics", "Scrabble", "RxScrabble", "Dotty", "ScalaDoku", "ScalaKmeans", "Philosophers",
-            "ScalaStmBench7", "FinagleChirper", "FinagleHttp"]
+benches= ["AkkaUct", "Als", "ChiSquare", "DecTree", "Dotty", "FinagleChirper", "FinagleHttp", "FjKmeans", "FutureGenetic", 
+                "GaussMix", "LogRegression", "Mnemonics", "MovieLens", "NaiveBayes", "PageRank", "ParMnemonics", 
+                "Philosophers", "Reactors", "RxScrabble", "ScalaDoku", "ScalaKmeans", "ScalaStmBench7", "Scrabble"     
+         ]
 
 #forks= [23, 50, 20, 10, 15, 15, 25, 25, 20, 25, 20, 12, 30, 30, 8, 7, 12, 25, 22, 20, 10, 7, 35]
 #forks= [8, 17, 7, 4, 5, 5, 8, 8, 7, 8, 7, 4, 10, 10, 2, 2, 4, 8, 7, 7, 4, 2, 12]

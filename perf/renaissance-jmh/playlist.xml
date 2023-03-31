@@ -27,18 +27,6 @@
 		</groups>
 	</test>
 	<test>
-		<testCaseName>renaissance-jmh-Reactors</testCaseName>
-		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Reactors_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Reactors.json$(Q) Reactors; $(TEST_STATUS)
-		</command>
-		<levels>
-			<level>extended</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-	</test>
-	<test>
 		<testCaseName>renaissance-jmh-Als</testCaseName>
 		<command>
 			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Als_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Als.json$(Q) Als; $(TEST_STATUS)
@@ -75,6 +63,66 @@
 		</groups>
 	</test>
 	<test>
+		<testCaseName>renaissance-jmh-Dotty</testCaseName>
+		<command>
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Dotty_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Dotty.json$(Q) Dotty; $(TEST_STATUS)
+		</command>
+		<levels>
+			<level>extended</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+	</test>
+	<test>
+		<testCaseName>renaissance-jmh-FinagleChirper</testCaseName>
+		<command>
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=FinagleChirper_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)FinagleChirper.json$(Q) FinagleChirper; $(TEST_STATUS)
+		</command>
+		<levels>
+			<level>extended</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+	</test>
+	<test>
+		<testCaseName>renaissance-jmh-FinagleHttp</testCaseName>
+		<command>
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=FinagleHttp_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)FinagleHttp.json$(Q) FinagleHttp; $(TEST_STATUS)
+		</command>
+		<levels>
+			<level>extended</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+	</test>
+	<test>
+		<testCaseName>renaissance-jmh-FjKmeans</testCaseName>
+		<command>
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=FjKmeans_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)FjKmeans.json$(Q) FjKmeans; $(TEST_STATUS)
+		</command>
+		<levels>
+			<level>extended</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+	</test>
+	<test>
+		<testCaseName>renaissance-jmh-FutureGenetic</testCaseName>
+		<command>
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=FutureGenetic_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)FutureGenetic.json$(Q) FutureGenetic; $(TEST_STATUS)
+		</command>
+		<levels>
+			<level>extended</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+	</test>
+	<test>
 		<testCaseName>renaissance-jmh-GaussMix</testCaseName>
 		<command>
 			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=GaussMix_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)GaussMix.json$(Q) GaussMix; $(TEST_STATUS)
@@ -90,6 +138,18 @@
 		<testCaseName>renaissance-jmh-LogRegression</testCaseName>
 		<command>
 			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=LogRegression_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)LogRegression.json$(Q) LogRegression; $(TEST_STATUS)
+		</command>
+		<levels>
+			<level>extended</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+	</test>
+	<test>
+		<testCaseName>renaissance-jmh-Mnemonics</testCaseName>
+		<command>
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Mnemonics_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Mnemonics.json$(Q) Mnemonics; $(TEST_STATUS)
 		</command>
 		<levels>
 			<level>extended</level>
@@ -135,42 +195,6 @@
 		</groups>
 	</test>
 	<test>
-		<testCaseName>renaissance-jmh-FjKmeans</testCaseName>
-		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=FjKmeans_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)FjKmeans.json$(Q) FjKmeans; $(TEST_STATUS)
-		</command>
-		<levels>
-			<level>extended</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-	</test>
-	<test>
-		<testCaseName>renaissance-jmh-FutureGenetic</testCaseName>
-		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=FutureGenetic_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)FutureGenetic.json$(Q) FutureGenetic; $(TEST_STATUS)
-		</command>
-		<levels>
-			<level>extended</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-	</test>
-	<test>
-		<testCaseName>renaissance-jmh-Mnemonics</testCaseName>
-		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Mnemonics_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Mnemonics.json$(Q) Mnemonics; $(TEST_STATUS)
-		</command>
-		<levels>
-			<level>extended</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-	</test>
-	<test>
 		<testCaseName>renaissance-jmh-ParMnemonics</testCaseName>
 		<command>
 			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=ParMnemonics_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)ParMnemonics.json$(Q) ParMnemonics; $(TEST_STATUS)
@@ -183,9 +207,21 @@
 		</groups>
 	</test>
 	<test>
-		<testCaseName>renaissance-jmh-Scrabble</testCaseName>
+		<testCaseName>renaissance-jmh-Philosophers</testCaseName>
 		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Scrabble_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Scrabble.json$(Q) Scrabble; $(TEST_STATUS)
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Philosophers_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Philosophers.json$(Q) Philosophers; $(TEST_STATUS)
+		</command>
+		<levels>
+			<level>extended</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+	</test>
+	<test>
+		<testCaseName>renaissance-jmh-Reactors</testCaseName>
+		<command>
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Reactors_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Reactors.json$(Q) Reactors; $(TEST_STATUS)
 		</command>
 		<levels>
 			<level>extended</level>
@@ -198,18 +234,6 @@
 		<testCaseName>renaissance-jmh-RxScrabble</testCaseName>
 		<command>
 			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=RxScrabble_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)RxScrabble.json$(Q) RxScrabble; $(TEST_STATUS)
-		</command>
-		<levels>
-			<level>extended</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-	</test>
-	<test>
-		<testCaseName>renaissance-jmh-Dotty</testCaseName>
-		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Dotty_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Dotty.json$(Q) Dotty; $(TEST_STATUS)
 		</command>
 		<levels>
 			<level>extended</level>
@@ -243,18 +267,6 @@
 		</groups>
 	</test>
 	<test>
-		<testCaseName>renaissance-jmh-Philosophers</testCaseName>
-		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Philosophers_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Philosophers.json$(Q) Philosophers; $(TEST_STATUS)
-		</command>
-		<levels>
-			<level>extended</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-	</test>
-	<test>
 		<testCaseName>renaissance-jmh-ScalaStmBench7</testCaseName>
 		<command>
 			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=ScalaStmBench7_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)ScalaStmBench7.json$(Q) ScalaStmBench7; $(TEST_STATUS)
@@ -267,21 +279,9 @@
 		</groups>
 	</test>
 	<test>
-		<testCaseName>renaissance-jmh-FinagleChirper</testCaseName>
+		<testCaseName>renaissance-jmh-Scrabble</testCaseName>
 		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=FinagleChirper_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)FinagleChirper.json$(Q) FinagleChirper; $(TEST_STATUS)
-		</command>
-		<levels>
-			<level>extended</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-	</test>
-	<test>
-		<testCaseName>renaissance-jmh-FinagleHttp</testCaseName>
-		<command>
-			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=FinagleHttp_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)FinagleHttp.json$(Q) FinagleHttp; $(TEST_STATUS)
+			$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=Scrabble_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f 1 -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)Scrabble.json$(Q) Scrabble; $(TEST_STATUS)
 		</command>
 		<levels>
 			<level>extended</level>
