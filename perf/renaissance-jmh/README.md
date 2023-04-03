@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 -->
 
-# Renaissance JMH Benchmarks
+# Renaissance Benchmark Suite (JMH)
 
 The [Renaissance Benchmark Suite](https://github.com/renaissance-benchmarks/renaissance/#) is an open-source benchmark suite for testing the performance of the JVM. This suite also [supports](https://github.com/renaissance-benchmarks/renaissance/#jmh-support) running these benchmarks using [JMH](https://github.com/openjdk/jmh). This is the method used to run the benchmarks in this directory.
 
