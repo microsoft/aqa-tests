@@ -1,30 +1,22 @@
 '''
-<playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../TKG/playlist.xsd">
-	<include>../perf.mk</include>
-	<test>
-		<testCaseName>renaissance-jmh-akka-uct</testCaseName>
-		<command>$(JAVA_COMMAND) $(JVM_OPTIONS) -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) --json $(Q)$(REPORTDIR)$(D)akka-uct.json$(Q) akka-uct; \
-		$(TEST_STATUS)</command>
-		<levels>
-			<level>sanity</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-	</test>
-</playlist>
+This script generates the playlist.xml file necessary for running benchmarks in the Renaissance JHM benchmark suite.
+See https://github.com/renaissance-benchmarks/renaissance/.
 '''
 
-benches= ["AkkaUct", "Als", "ChiSquare", "DecTree", "Dotty", "FinagleChirper", "FinagleHttp", "FjKmeans", "FutureGenetic", 
-                "GaussMix", "LogRegression", "Mnemonics", "MovieLens", "NaiveBayes", "PageRank", "ParMnemonics", 
-                "Philosophers", "Reactors", "RxScrabble", "ScalaDoku", "ScalaKmeans", "ScalaStmBench7", "Scrabble"     
+# This is the list of benchmarks in the Renaissance suite that we're interested in.
+benchmarks= [  "AkkaUct", "Als", "ChiSquare", "DecTree", "Dotty", "FinagleChirper", "FinagleHttp", "FjKmeans", "FutureGenetic", 
+            "GaussMix", "LogRegression", "Mnemonics", "MovieLens", "NaiveBayes", "PageRank", "ParMnemonics", 
+            "Philosophers", "Reactors", "RxScrabble", "ScalaDoku", "ScalaKmeans", "ScalaStmBench7", "Scrabble"     
          ]
 
-#forks= [23, 50, 20, 10, 15, 15, 25, 25, 20, 25, 20, 12, 30, 30, 8, 7, 12, 25, 22, 20, 10, 7, 35]
-#forks= [8, 17, 7, 4, 5, 5, 8, 8, 7, 8, 7, 4, 10, 10, 2, 2, 4, 8, 7, 7, 4, 2, 12]
-forks= [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+# Forks are used to specify the number of times a benchmark should be run
+# Note that benchmarks already have a default # of measurement interations - forks will multiply those
+forks= [8, 17, 7, 4, 5, 5, 8, 8, 7, 8, 7, 4, 10, 10, 2, 2, 4, 8, 7, 7, 4, 2, 12]
 
+# Create the file
 file = open("playlist.xml", "w")
+
+# Generate the header
 file.write("<?xml version='1.0' encoding='UTF-8'?>")
 file.write("""
 <!--
@@ -42,10 +34,13 @@ file.write("""
 -->
 """)
 
+# Generate the body
 file.write("<playlist xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"../../TKG/playlist.xsd\">\n")
 file.write("\t<include>../perf.mk</include>\n")
 
-for idx, bench in enumerate(benches):
+# For each of the benchmarks in the list, generate a test
+# The additional JVM options were chosen by experimentation in order to reduce variation in the performance of the benchmarks
+for idx, bench in enumerate(benchmarks):
     file.write("\t<test>\n")
 
     file.write("\t\t<testCaseName>renaissance-jmh-" + bench + "</testCaseName>\n")
