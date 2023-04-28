@@ -45,7 +45,7 @@ for idx, bench in enumerate(benchmarks):
 
     file.write("\t\t<testCaseName>renaissance-jmh-" + bench + "</testCaseName>\n")
     file.write("\t\t<command>\n")
-    file.write("\t\t\t$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*:file=" + bench + "_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages")
+    file.write("\t\t\t$(JAVA_COMMAND) $(ADD_OPENS_CMD) $(JVM_OPTIONS) -Xlog:gc*,gc+ref=debug,gc+phases=debug,gc+age=trace,gc+ergo*=trace,safepoint:file=" + bench + "_gc.log -XX:+UseG1GC -Xms12G -Xmx12G -XX:ThreadPriorityPolicy=1 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages")
     file.write(" -jar $(Q)$(TEST_RESROOT)$(D)renaissance-jmh.jar$(Q) -f " + str(forks[idx]) + " -prof gc -bm avgt -rf json -rff $(Q)$(REPORTDIR)$(D)" + bench + ".json$(Q) " + bench + "; $(TEST_STATUS)\n")
     file.write("\t\t</command>\n")
     file.write("\t\t<levels>\n\t\t\t<level>extended</level>\n\t\t</levels>\n\t\t<groups>\n\t\t\t<group>perf</group>\n\t\t</groups>\n")
