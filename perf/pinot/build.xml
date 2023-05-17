@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+-->
+<project name="Pinot" default="build" basedir=".">
+	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+	<description>Pinot</description>
+
+	<!-- set global properties for this build -->
+	<property name="DEST" value="${BUILD_ROOT}/perf/pinot" />
+	<property name="SRC" location="." />
+
+	<target name="init">
+		<mkdir dir="${DEST}" />
+	</target>
+
+	<target name="getPinot" depends="init" description="Download Pinot">
+		<var name="DIR_NAME" value="pinot"/>
+		<if>
+			<available file="${DIR_NAME}" type="dir" />
+			<then>
+				<echo message="${DIR_NAME} exists. Hence, not downloading it." />
+			</then>
+			<else>
+				<mkdir dir="${DIR_NAME}"/>
+				<echo message="Downloading Pinot"/>
+				<exec executable="wget" failonerror="true" dir="${DIR_NAME}">
+					<arg line="https://singhnitin.blob.core.windows.net/pinot-build/apache-pinot-0.12.1-bin.tar.gz"/>
+				</exec>
+				<echo message="Extracting Pinot"/>
+				<exec executable="tar" failonerror="true" dir="${DIR_NAME}">
+					<arg line="-xvf apache-pinot-0.12.1-bin.tar.gz"/>
+				</exec>
+			</else>
+		</if>
+	</target>
+
+
+	<target name="dist" depends="getPinot" description="Generate the distribution">
+		<copy todir="${DEST}">
+			<fileset dir="${SRC}"/>
+		</copy>
+	</target>
+
+	<target name="build">
+		<antcall target="dist" inheritall="true" />
+	</target>
+</project>
