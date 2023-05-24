@@ -41,7 +41,8 @@
 					<arg line="-xzf apache-pinot-0.12.1-src.tar.gz"/>
 				</exec>
 				<exec executable="mv" dir="${basedir}">
-					<arg line="apache-pinot-0.12.1-src ${DIR_NAME}"/>
+					<arg value="apache-pinot-0.12.1-src"/>
+					<arg value="${DIR_NAME}"/>
 				</exec>
 				<exec executable="rm" dir="${basedir}">
 					<arg line="apache-pinot-0.12.1-src.tar.gz"/>
@@ -49,7 +50,7 @@
 			</else>
 		</if>
 		<echo message="Building Pinot"/>
-		<exec executable="bash" dir="${DIR_NAME}/pinot-perf" failonerror="true">
+		<exec executable="bash" dir="${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf" failonerror="true">
 			<arg line="-c 'mvn package -DskipTests'"/>
 		</exec>
 	</target>
