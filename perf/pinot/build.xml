@@ -26,6 +26,7 @@
 
 	<target name="getPinot" depends="init" description="Clone and build Pinot">
 		<var name="DIR_NAME" value="pinot"/>
+		<var name="TAR_URL" value="https://downloads.apache.org/pinot/apache-pinot-0.12.1/apache-pinot-0.12.1-src.tar.gz"/>
 		<if>
 			<available file="${DIR_NAME}" type="dir" />
 			<then>
@@ -33,8 +34,17 @@
 			</then>
 			<else>
 				<echo message="Cloning Pinot"/>
-				<exec executable="git" dir="${basedir}">
-					<arg line="clone https://github.com/apache/pinot.git ${DIR_NAME}"/>
+				<exec executable="wget" dir="${basedir}">
+					<arg line="${TAR_URL}"/>
+				</exec>
+				<exec executable="tar" dir="${basedir}">
+					<arg line="-xzf apache-pinot-0.12.1-src.tar.gz"/>
+				</exec>
+				<exec executable="mv" dir="${basedir}">
+					<arg line="apache-pinot-0.12.1-src ${DIR_NAME}"/>
+				</exec>
+				<exec executable="rm" dir="${basedir}">
+					<arg line="apache-pinot-0.12.1-src.tar.gz"/>
 				</exec>
 			</else>
 		</if>
