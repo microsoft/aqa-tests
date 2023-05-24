@@ -24,27 +24,25 @@
 		<mkdir dir="${DEST}" />
 	</target>
 
-	<target name="getPinot" depends="init" description="Download Pinot">
+	<target name="getPinot" depends="init" description="Clone and build Pinot">
 		<var name="DIR_NAME" value="pinot"/>
 		<if>
 			<available file="${DIR_NAME}" type="dir" />
 			<then>
-				<echo message="${DIR_NAME} exists. Hence, not downloading it." />
+				<echo message="${DIR_NAME} exists. Hence, not cloning it." />
 			</then>
 			<else>
-				<mkdir dir="${DIR_NAME}"/>
-				<echo message="Downloading Pinot"/>
-				<exec executable="wget" failonerror="true" dir="${DIR_NAME}">
-					<arg line="https://singhnitin.blob.core.windows.net/pinot-build/apache-pinot-0.12.1-bin.tar.gz"/>
-				</exec>
-				<echo message="Extracting Pinot"/>
-				<exec executable="tar" failonerror="true" dir="${DIR_NAME}">
-					<arg line="-xvf apache-pinot-0.12.1-bin.tar.gz"/>
+				<echo message="Cloning Pinot"/>
+				<exec executable="git" dir="${basedir}">
+					<arg line="clone https://github.com/apache/pinot.git ${DIR_NAME}"/>
 				</exec>
 			</else>
 		</if>
+		<echo message="Building Pinot"/>
+		<exec executable="bash" dir="${DIR_NAME}/pinot-perf" failonerror="true">
+			<arg line="-c 'mvn package -DskipTests'"/>
+		</exec>
 	</target>
-
 
 	<target name="dist" depends="getPinot" description="Generate the distribution">
 		<copy todir="${DEST}">
