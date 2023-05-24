@@ -43,7 +43,7 @@
 				</exec>
 			</else>
 		</if>
-		<echo message="Building Pinot"/>
+		<echo message="Building Pinot in ${basedir}/${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf"/>
 		<exec executable="bash" dir="${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf" failonerror="true">
 			<arg line="-c 'mvn package -DskipTests'"/>
 		</exec>
