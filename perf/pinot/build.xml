@@ -24,33 +24,27 @@
 		<mkdir dir="${DEST}" />
 	</target>
 
-	<target name="getPinot" depends="init" description="Clone and build Pinot">
+	<target name="getPinot" depends="init" description="Download Pinot">
 		<var name="DIR_NAME" value="pinot"/>
-		<var name="TAR_URL" value="https://downloads.apache.org/pinot/apache-pinot-0.12.1/apache-pinot-0.12.1-src.tar.gz"/>
 		<if>
 			<available file="${DIR_NAME}" type="dir" />
 			<then>
-				<echo message="${DIR_NAME} exists. Hence, not cloning it." />
+				<echo message="${DIR_NAME} exists. Hence, not downloading it." />
 			</then>
 			<else>
-				<echo message="Cloning Pinot"/>
-				<exec executable="wget" dir="${basedir}">
-					<arg line="${TAR_URL}"/>
+				<mkdir dir="${DIR_NAME}"/>
+				<echo message="Downloading Pinot"/>
+				<exec executable="wget" failonerror="true" dir="${DIR_NAME}">
+					<arg line="https://downloads.apache.org/pinot/apache-pinot-0.12.1/apache-pinot-0.12.1-src.tar.gz"/>
 				</exec>
-				<exec executable="tar" dir="${basedir}">
-					<arg line="-xzf apache-pinot-0.12.1-src.tar.gz"/>
-				</exec>
-				<exec executable="mv" dir="${basedir}">
-					<arg value="apache-pinot-0.12.1-src"/>
-					<arg value="${DIR_NAME}"/>
-				</exec>
-				<exec executable="rm" dir="${basedir}">
-					<arg line="apache-pinot-0.12.1-src.tar.gz"/>
+				<echo message="Extracting Pinot"/>
+				<exec executable="tar" failonerror="true" dir="${DIR_NAME}">
+					<arg line="-xvf apache-pinot-0.12.1-src.tar.gz"/>
 				</exec>
 			</else>
 		</if>
 		<echo message="Building Pinot"/>
-		<exec executable="bash" dir="${DIR_NAME}/pinot-perf" failonerror="true">
+		<exec executable="bash" dir="${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf" failonerror="true">
 			<arg line="-c 'mvn package -DskipTests'"/>
 		</exec>
 	</target>
