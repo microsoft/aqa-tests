@@ -14,46 +14,10 @@
 -->
 <playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../TKG/playlist.xsd">
 	<include>run/testenv.mk</include>
-
-	<!-- Define the variable for the Pinot path -->
-	<property name="PINOT_PATH" value="$(TEST_RESROOT)/pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg"/>
-
 	<test>
 		<testCaseName>pinot-BenchmarkStringDictionary</testCaseName>
 		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(PINOT_PATH)/bin$(Q); bash $(Q)$(PINOT_PATH)/bin/pinot-BenchmarkStringDictionary.sh$(Q); \
-			$(TEST_STATUS)
-		</command>
-		<levels>
-			<level>dev</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-		<vendors>
-			<vendor>microsoft</vendor>
-		</vendors>
-	</test>
-	<test>
-		<testCaseName>pinot-BenchmarkRealTimeConsumptionSpeed</testCaseName>
-		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(PINOT_PATH)/bin$(Q); bash $(Q)$(PINOT_PATH)/bin/pinot-BenchmarkRealTimeConsumptionSpeed.sh$(Q); \
-			$(TEST_STATUS)
-		</command>
-		<levels>
-			<level>dev</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-		<vendors>
-			<vendor>microsoft</vendor>
-		</vendors>
-	</test>
-	<test>
-		<testCaseName>pinot-BenchmarkQueryEngine</testCaseName>
-		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(PINOT_PATH)/bin$(Q); bash $(Q)$(PINOT_PATH)/bin/pinot-BenchmarkQueryEngine.sh$(Q); \
+			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-BenchmarkStringDictionary.sh$(Q); \
 			$(TEST_STATUS)
 		</command>
 		<levels>
@@ -69,7 +33,39 @@
 	<test>
 		<testCaseName>pinot-StringDicionaryPerfTest</testCaseName>
 		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(PINOT_PATH)/bin$(Q); bash $(Q)$(PINOT_PATH)/bin/pinot-StringDicionaryPerfTest.sh$(Q); \
+			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-StringDicionaryPerfTest.sh$(Q); \
+			$(TEST_STATUS)
+		</command>
+		<levels>
+			<level>dev</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+		<vendors>
+			<vendor>microsoft</vendor>
+		</vendors>
+	</test>
+	<test>
+		<testCaseName>pinot-BenchmarkQueryEngine</testCaseName>
+		<command>
+			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-BenchmarkQueryEngine.sh$(Q); \
+			$(TEST_STATUS)
+		</command>
+		<levels>
+			<level>dev</level>
+		</levels>
+		<groups>
+			<group>perf</group>
+		</groups>
+		<vendors>
+			<vendor>microsoft</vendor>
+		</vendors>
+	</test>
+	<test>
+		<testCaseName>pinot-BenchmarkPinotDataBuffer</testCaseName>
+		<command>
+			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-BenchmarkPinotDataBuffer.sh$(Q); \
 			$(TEST_STATUS)
 		</command>
 		<levels>
