@@ -45,10 +45,7 @@
 		</if>
 		<echo message="Building Pinot in ${basedir}/${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf"/>
 		<exec executable="bash" dir="${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf" failonerror="true">
-			<arg line="-c 'mvn dependency:purge-local-repository'"/>
-		</exec>
-		<exec executable="bash" dir="${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf" failonerror="true">
-			<arg line="-c 'mvn clean package -DskipTests -U'"/>
+			<arg line="-c 'mvn package -DskipTests'"/>
 		</exec>
 	</target>
 
