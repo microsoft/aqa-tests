@@ -1,10 +1,7 @@
 <playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../TKG/playlist.xsd">
 	<include>run/testenv.mk</include>
 	<test>
-		<!-- The minimum hardware requirement to run this test is 8GB of memory and 8 CPU cores -->
-		<!-- see specjbb/run/options/specjbb-multijvm-simple.sh for more details -->
-
-		<testCaseName>JMH-benchmarks</testCaseName>
+		<testCaseName>jmh-WriteBarrier</testCaseName>
 		<command>. $(Q)$(RUN_OPTIONS)$(D)run_jmh_jdk_micros.sh$(Q); $(TEST_STATUS)</command>
 		<levels>
 			<level>dev</level>
