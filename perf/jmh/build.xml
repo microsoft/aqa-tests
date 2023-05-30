@@ -33,15 +33,16 @@
 			</then>
 			<else>
 				<mkdir dir="${DIR_NAME}"/>
-				<echo message="Downloading JMH"/>
-				<exec executable="wget" failonerror="true" dir="${DIR_NAME}">
-					<arg line="https://maven-badges.herokuapp.com/maven-central/org.openjdk.jmh/jmh-core/badge.svg"/>
+				<echo message="Cloning JMH repository"/>
+				<exec executable="git" failonerror="true" dir="${DIR_NAME}">
+					<arg line="clone https://github.com/openjdk/jmh-jdk-microbenchmarks"/>
 				</exec>
-				<echo message="Extracting JMH"/>
-				<!-- Add the necessary steps to extract JMH -->
-				<exec executable="tar" failonerror="true" dir="${DIR_NAME}">
-					<arg line="-xvf apache-pinot-0.12.1-bin.tar.gz"/>
+				<echo message="JMH repository cloned"/>
+				<echo message="Running 'mvn install' in JMH repository"/>
+				<exec executable="mvn" failonerror="true" dir="${DIR_NAME}/jmh-jdk-microbenchmarks">
+					<arg value="install"/>
 				</exec>
+				<echo message="'mvn install' completed"/>
 				<exec executable="mkdir" failonerror="true">
 					<arg value="-p"/>
 					<arg value="${DIR_NAME}/../applogs"/>
@@ -49,7 +50,6 @@
 			</else>
 		</if>
 	</target>
-
 
 	<target name="dist" depends="getJMH" description="Generate the distribution">
 		<copy todir="${DEST}">
