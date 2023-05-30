@@ -2,7 +2,10 @@
 	<include>run/testenv.mk</include>
 	<test>
 		<testCaseName>jmh-WriteBarrier</testCaseName>
-		<command>. $(Q)$(RUN_OPTIONS)$(D)run_jmh_jdk_micros.sh$(Q); $(TEST_STATUS)</command>
+		<command>
+			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)jmh/jmh-jdk-microbenchmarks/micros-uber$(Q); bash $(Q)$(TEST_RESROOT)$(D)run_jmh_jdk_micros.sh; \
+			$(TEST_STATUS)
+		</command>
 		<levels>
 			<level>dev</level>
 		</levels>

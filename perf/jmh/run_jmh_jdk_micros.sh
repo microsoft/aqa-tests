@@ -1,12 +1,10 @@
 #  -o <filename>               Redirect human-readable output to a given file.
 human_readable_output_file_opt="-o $human_readable_output_file"
-
 #  -rff <filename>             Write machine-readable results to a given file.
 #                              The file format is controlled by -rf option. Please
 #                              see the list of result formats for available formats.
 #                              (default: jmh-result.<result-format>)
 machine_readable_output_file_opt="-rff $machine_readable_output_file"
-
 #  -rf <type>                  Format type for machine-readable results. These
 #                              results are written to a separate file (see -rff).
 #                              See the list of available result formats with -lrf.
@@ -15,13 +13,11 @@ machine_readable_output_file_opt="-rff $machine_readable_output_file"
 # Output from `java $benchmark_jar_path -lrf`:
 #  Available formats: text, csv, scsv, json, latex
 format_type_opt="-rf text"
-
 benchmark="-jar $benchmark_jar_path"
 benchmark="$benchmark $fork_opt $synchronize_iterations_opt $warmup_time_opt"
 benchmark="$benchmark $measurement_iterations_opt $warmup_iterations_opt"
 benchmark="$benchmark $worker_threads_opt $human_readable_output_file_opt"
 benchmark="$benchmark $machine_readable_output_file_opt $format_type_opt"
-
 #jdk="jdk-17.0.3+7"
 #jdk_bin_path="../jdks/$jdk/bin/"
 jdk_bin_path="${TEST_JDK_HOME}/bin/"
@@ -30,7 +26,6 @@ if [ ! -d "$jdk_bin_path" ]; then
     echo "Warning: Using the java binary automatically selected by the shell."
     jdk_bin_path=""
 fi
-
 run_benchmarks()
 {
     date

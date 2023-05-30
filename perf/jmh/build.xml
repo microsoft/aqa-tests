@@ -45,7 +45,7 @@
 				<echo message="'mvn install' completed"/>
 				<exec executable="mkdir" failonerror="true">
 					<arg value="-p"/>
-					<arg value="${DIR_NAME}/../applogs"/>
+					<arg value="${DIR_NAME}/applogs"/>
 				</exec>
 			</else>
 		</if>
