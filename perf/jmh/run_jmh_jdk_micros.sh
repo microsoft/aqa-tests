@@ -237,7 +237,7 @@ writebarrier_benchmark_filter="WriteBarrier"
 
 #crypto_benchmark_filter="(?i)crypto"
 
-# Start the actual benchmark run
+# Start the actual benchmark run.
 
 run_benchmarks $writebarrier_benchmark_filter
 #run_benchmarks $crypto_benchmark_filter
