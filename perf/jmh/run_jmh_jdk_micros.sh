@@ -212,7 +212,7 @@ benchmark="$benchmark $machine_readable_output_file_opt $format_type_opt"
 
 #jdk="jdk-17.0.3+7"
 jdk_bin_path="${TEST_JDK_HOME}/bin/"
-echo "Info : JDK home is : $"jdk_bin_path "
+echo "Info : JDK home is : $jdk_bin_path "
 
 if [ ! -d "$jdk_bin_path" ]; then
     echo "Warning: Could not find JDK bin path: $jdk_bin_path"
