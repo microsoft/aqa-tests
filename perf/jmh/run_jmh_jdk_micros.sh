@@ -229,7 +229,7 @@ run_benchmarks()
 
     benchmark_command="${jdk_bin_path}java $jvm_heap_size_opts $parthreads $std_jvm_opts $jvm_args $benchmark \"$benchmark_filter_regex\""
     echo $benchmark_command
-#    eval $benchmark_command
+    eval $benchmark_command
 
     echo "**** $jvm_heap_size_opts $timestamp Benchmarks completed for filter $benchmark_filter_regex ****"
 }
