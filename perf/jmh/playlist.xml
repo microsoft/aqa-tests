@@ -3,7 +3,7 @@
 	<test>
 		<testCaseName>jmh-WriteBarrier</testCaseName>
 		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)jmh-jdk-microbenchmarks/micros-uber$(Q); bash $(Q)$(TEST_RESROOT)$(D)run_jmh_jdk_micros.sh; \
+			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)jmh-jdk-microbenchmarks/micros-uber$(Q); bash $(Q)$(TEST_RESROOT)$(D)run_jmh_jdk_micros.sh$(Q); \
 			$(TEST_STATUS)
 		</command>
 		<levels>
