@@ -10,7 +10,8 @@ function help
 }
 
 function validate_numeric_args
-{
+{   
+    echo "Validating numeric arguments. "
     if [[ $2 =~ [^0-9] ]]; then
         echo "Error: invalid heap size $2"
         echo "Error: please specify a numeric value for the heap size."
@@ -134,12 +135,14 @@ echo ""
 timestamp=`date +%Y-%m-%d_%H-%M-%S`
 
 gc_heap_timestamp_str="$specified_gc-${specified_heap_size}G-$timestamp"
-output_dir="./applogs"
+output_dir="$(TEST_RESROOT)/applogs"
+echo "Info: Output log directory : $output_dir"
 human_readable_output_file="${output_dir}/${gc_heap_timestamp_str}.txt"
 machine_readable_output_file="${output_dir}/${gc_heap_timestamp_str}_machine.txt"
 
 #benchmark_jar_path="jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
-benchmark_jar_path="home/nitin/jmh/jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
+benchmark_jar_path="$(TEST_RESROOT)/jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
+echo "Info : Benchmark Jar path : $benchmark_jar_path "
 
 #
 # Set up the benchmark arguments.
@@ -209,6 +212,7 @@ benchmark="$benchmark $machine_readable_output_file_opt $format_type_opt"
 
 #jdk="jdk-17.0.3+7"
 jdk_bin_path="${TEST_JDK_HOME}/bin/"
+echo "Info : JDK home is : $"jdk_bin_path "
 
 if [ ! -d "$jdk_bin_path" ]; then
     echo "Warning: Could not find JDK bin path: $jdk_bin_path"
