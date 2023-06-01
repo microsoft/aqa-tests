@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script is based on one of Monica Beckwith's scripts.
-
+source run/testenv.mk
 function help
 {
     echo -e "\nUsage: $0 [GC HeapSizeGB WorkerThreads WarmupTimeSeconds WarmupIterations MeasurementIterations [JvmArgs]]\n"
