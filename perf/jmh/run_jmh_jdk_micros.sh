@@ -8,7 +8,7 @@ function help
     echo "Example: $0 Parallel 80 1 10 5 5"
     echo "Example: $0 g1       80 1 10 5 5 -XX:MaxGCPauseMillis=30 -XX:MaxNewSize=30g"
 }
-
+source run/testenv.mk
 function validate_numeric_args
 {   
     echo "Validating numeric arguments. "
