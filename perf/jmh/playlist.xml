@@ -3,8 +3,9 @@
 	<test>
 		<testCaseName>jmh-WriteBarrier</testCaseName>
 		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)jmh-jdk-microbenchmarks/micros-uber$(Q); bash $(Q)$(TEST_RESROOT)$(D)run_jmh_jdk_micros.sh$(Q) Parallel 28 5 5 5 5 \
-			$(TEST_STATUS)
+			cd "$(dirname "$0")"  # Change directory to the script's location
+			export TEST_RESROOT="$(pwd)"  # Export TEST_RESROOT as the script's directory
+			export JAVA_OPTS="$JVM_OPTIONS"; cd "$(TEST_RESROOT)/jmh-jdk-microbenchmarks/micros-uber"; bash "$(TEST_RESROOT)/run_jmh_jdk_micros.sh" Parallel 28 5 5 5 5 "$TEST_STATUS"
 		</command>
 		<levels>
 			<level>dev</level>
@@ -17,3 +18,4 @@
 		</vendors>
 	</test>
 </playlist>
+
