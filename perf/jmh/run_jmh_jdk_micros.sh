@@ -143,13 +143,13 @@ export TEST_RESROOT
 echo "Value of TEST_RESROOT: $TEST_RESROOT"
 
 gc_heap_timestamp_str="$specified_gc-${specified_heap_size}G-$timestamp"
-output_dir="${TEST_RESROOT}/applogs"
+output_dir="/opt/azure_devops/agent/_work/1/s/jvmtest/perf/jmh/applogs"
 echo "Info: Output log directory : $output_dir"
 human_readable_output_file="${output_dir}/${gc_heap_timestamp_str}.txt"
 machine_readable_output_file="${output_dir}/${gc_heap_timestamp_str}_machine.txt"
 
 #benchmark_jar_path="jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
-benchmark_jar_path="${TEST_RESROOT}/jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
+benchmark_jar_path="/opt/azure_devops/agent/_work/1/s/jvmtest/perf/jmh/jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
 echo "Info : Benchmark Jar path : $benchmark_jar_path "
 
 #
