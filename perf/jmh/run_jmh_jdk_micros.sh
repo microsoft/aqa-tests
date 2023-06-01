@@ -133,15 +133,6 @@ echo ""
 
 timestamp=`date +%Y-%m-%d_%H-%M-%S`
 
-# Read the value of TEST_RESROOT from the XML file
-TEST_RESROOT=$(xmllint --xpath "//variable[@name='TEST_RESROOT']/text()" playlist.xml)
-
-# Set the value as an environment variable
-export TEST_RESROOT
-
-# Access the environment variable
-echo "Value of TEST_RESROOT: $TEST_RESROOT"
-
 gc_heap_timestamp_str="$specified_gc-${specified_heap_size}G-$timestamp"
 output_dir="/opt/azure_devops/agent/_work/1/s/jvmtest/perf/jmh/applogs"
 echo "Info: Output log directory : $output_dir"
