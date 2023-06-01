@@ -133,14 +133,23 @@ echo ""
 
 timestamp=`date +%Y-%m-%d_%H-%M-%S`
 
+# Read the value of TEST_RESROOT from the XML file
+TEST_RESROOT=$(xmllint --xpath "//variable[@name='TEST_RESROOT']/text()" playlist.xml)
+
+# Set the value as an environment variable
+export TEST_RESROOT
+
+# Access the environment variable
+echo "Value of TEST_RESROOT: $TEST_RESROOT"
+
 gc_heap_timestamp_str="$specified_gc-${specified_heap_size}G-$timestamp"
-output_dir="applogs"
+output_dir="${TEST_RESROOT}/applogs"
 echo "Info: Output log directory : $output_dir"
 human_readable_output_file="${output_dir}/${gc_heap_timestamp_str}.txt"
 machine_readable_output_file="${output_dir}/${gc_heap_timestamp_str}_machine.txt"
 
 #benchmark_jar_path="jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
-benchmark_jar_path="jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
+benchmark_jar_path="${TEST_RESROOT}/jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
 echo "Info : Benchmark Jar path : $benchmark_jar_path "
 
 #
