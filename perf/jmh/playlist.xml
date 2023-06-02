@@ -1,5 +1,5 @@
 <playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../TKG/playlist.xsd">
-	<include>run/testenv.mk</include>
+	<include>testenv.mk</include>
 	<test>
 		<testCaseName>jmh-WriteBarrier</testCaseName>
 		<command>
