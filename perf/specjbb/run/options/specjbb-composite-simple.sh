@@ -4,8 +4,8 @@
 # That is, the Controller and TransactionInjector will be run in the same JVM as the Backend
 export MODE="composite"
 
-# Number of runs to execute
-export NUM_OF_RUNS=5
+# Number of runs to execute - TODO this should be hookedinto the iterations variable in the aqa-test framework
+export NUM_OF_RUNS=1
 
 # This will configure a basic run of SPECjbb in composite mode
 # Therefore, the topography of the run includes 1 group consisting of
