@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -ev
 # This script is based on one of Monica Beckwith's scripts.
 function help
 {
@@ -7,7 +7,6 @@ function help
     echo "Example: $0 Parallel 80 1 10 5 5"
     echo "Example: $0 g1       80 1 10 5 5 -XX:MaxGCPauseMillis=30 -XX:MaxNewSize=30g"
 }
-source run/testenv.mk
 function validate_numeric_args
 {   
     echo "Validating numeric arguments. "
@@ -57,7 +56,7 @@ fi
 
 # Expand the arguments into an array
 args=("$@")
-jvm_args=""
+jvm_args="${JAVA_OPTS}"
 
 function compute_jvm_args
 {
@@ -104,7 +103,6 @@ compute_jvm_args ${args[@]}
 #    Enables the use of large page memory. By default, this option is disabled and large page memory isn't used.
 #    See https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#large-pages
 #
-#std_jvm_opts="-XX:+AlwaysPreTouch -XX:+UseLargePages"
 std_jvm_opts="-XX:+AlwaysPreTouch"
 
 
@@ -139,7 +137,6 @@ echo "Info: Output log directory : $output_dir"
 human_readable_output_file="${output_dir}/${gc_heap_timestamp_str}.txt"
 machine_readable_output_file="${output_dir}/${gc_heap_timestamp_str}_machine.txt"
 
-#benchmark_jar_path="jmh-jdk-microbenchmarks/micros-uber/target/micros-uberpackage-1.0-SNAPSHOT.jar"
 benchmark_jar_path=$JMH_JAR_PATH
 echo "Info : Benchmark Jar path : $benchmark_jar_path "
 
@@ -209,7 +206,6 @@ benchmark="$benchmark $measurement_iterations_opt $warmup_iterations_opt"
 benchmark="$benchmark $worker_threads_opt $human_readable_output_file_opt"
 benchmark="$benchmark $machine_readable_output_file_opt $format_type_opt"
 
-#jdk="jdk-17.0.3+7"
 jdk_bin_path="${TEST_JDK_HOME}/bin/"
 echo "Info : JDK home is : $jdk_bin_path "
 
@@ -233,17 +229,11 @@ run_benchmarks()
     echo "**** $jvm_heap_size_opts $timestamp Benchmarks completed for filter $benchmark_filter_regex ****"
 }
 
-#atomics_benchmark_filter="(?i)\.*(atomic|lock|volatile|ConcurrentHashMap|ProducerConsumer|Queues|ThreadLocalRandomNextInt)\.*"
-#atomics_benchmark_filter="(?i)\.*(atomiclongget|atomiclongnever|iallocationswithnullvolatile|recursivesynchronization|simplelock|callsitetarget)\.*"
-#writebarrier_benchmark_filter="(?i)\.*(writebarrier)\.*"
 writebarrier_benchmark_filter="WriteBarrier"
-
-#crypto_benchmark_filter="(?i)crypto"
 
 # Start the actual benchmark run.
 
 run_benchmarks $writebarrier_benchmark_filter
-#run_benchmarks $crypto_benchmark_filter
 
 # Display the date and time when the benchmarks complete
 date
