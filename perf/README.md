@@ -30,7 +30,8 @@ subdirectory and given a meaningful name.  Once the reorganization of this direc
 //├── specjbb
 //├── TechEmpower
 //├── ycsb
-```
+//├── pinot
+//├── jmh
 
 Each subdirectory requires a build.xml file describing where to pull the benchmark suite from, and how to build and run it.  Each subdirectory also requires a playlist.xml file which describes 1 or more benchmarks and what commands to run in order to execute a particular benchmark run.
 
@@ -75,6 +76,12 @@ Framework Benchmarks from [https://github.com/TechEmpower/FrameworkBenchmarks](h
 ### Yahoo! Cloud Serving Benchmark (YCSB)
 
 YCSB from [https://github.com/brianfrankcooper/YCSB/](https://github.com/brianfrankcooper/YCSB/), including ycsb-azurecosmos-load and ycsb-azurecosmos. AQA performance testing currently only supports YCSB with Azure Cosmos DB, but other databases may be added in the future.
+
+#### Apache Pinot Benchmark
+Pinot Benchmarks from https://github.com/apache/incubator-pinot, including the Pinot Query Benchmark Suite and Pinot Large Scale Benchmark Suite. AQA performance testing currently only supports Apache Pinot for real-time distributed OLAP datastore, but other datastores may be added in the future.
+
+#### Java Microbenchmark Harness (JMH) - WriteBarrier.
+WriteBarrier benchmarks from https://github.com/openjdk/jmh/, including the WriteBarrier specific tests. Our AQA performance testing currently only supports JMH with WriteBarrier optimization for JVM, but additional optimizations and test cases may be included in the future.
 
 Additional benchmarks are being reviewed for addition and if you wish to include more, please comment in the open performance benchmarks [issue 1112](https://github.com/adoptium/aqa-tests/issues/1112).
 
