@@ -23,7 +23,7 @@
 	<target name="init">
 		<mkdir dir="${DEST}" />
 	</target>
-
+	<!-- Reason for using the source: The provided binaries lack the essential components required for executing the performance benchmarks. They solely include the binaries for running the Pinot application. -->
 	<target name="getPinot" depends="init" description="Download Pinot">
 		<var name="DIR_NAME" value="pinot"/>
 		<if>
@@ -35,16 +35,19 @@
 				<mkdir dir="${DIR_NAME}"/>
 				<echo message="Downloading Pinot"/>
 				<exec executable="wget" failonerror="true" dir="${DIR_NAME}">
-					<arg line="https://singhnitin.blob.core.windows.net/pinot-build/apache-pinot-0.12.1-bin.tar.gz"/>
+					<arg line="https://downloads.apache.org/pinot/apache-pinot-0.12.1/apache-pinot-0.12.1-src.tar.gz"/>
 				</exec>
 				<echo message="Extracting Pinot"/>
 				<exec executable="tar" failonerror="true" dir="${DIR_NAME}">
-					<arg line="-xvf apache-pinot-0.12.1-bin.tar.gz"/>
+					<arg line="-xvf apache-pinot-0.12.1-src.tar.gz"/>
 				</exec>
 			</else>
 		</if>
+		<echo message="Building Pinot in ${basedir}/${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf"/>
+		<exec executable="bash" dir="${DIR_NAME}/apache-pinot-0.12.1-src/pinot-perf" failonerror="true">
+			<arg line="-c 'mvn package -DskipTests'"/>
+		</exec>
 	</target>
-
 
 	<target name="dist" depends="getPinot" description="Generate the distribution">
 		<copy todir="${DEST}">

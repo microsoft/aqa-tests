@@ -46,6 +46,8 @@ getSemeruDockerfile() {
             sed -i 's;-H "Authorization: Bearer ${ARTIFACTORY_TOKEN}";--user "${DOCKER_REGISTRY_CREDENTIALS_USR}:${DOCKER_REGISTRY_CREDENTIALS_PSW}";' $semeruDockerfile
             # delete line: ENV JAVA_VERSION .*
             sed -i "s:ENV JAVA_VERSION .*: :" $semeruDockerfile
+            #  delete line: exit 1; as we need to test platforms that do not have ea build yet
+            sed -i '/exit 1;/d' $semeruDockerfile
             # delete line: curl -LfsSo /tmp/openjdk.tar.xz ${BINARY_URL};
             sed -i '/curl -LfsSo \/tmp\/openjdk.tar.gz ${BINARY_URL};/d' $semeruDockerfile
             # delete line: echo "${ESUM} */tmp/openjdk.tar.xz" | sha256sum -c -;
@@ -54,7 +56,7 @@ getSemeruDockerfile() {
             sed -i 's:mkdir -p \/opt\/java\/java-ea; \\:mkdir -p \/opt\/java\/java-ea;:' $semeruDockerfile
             sed -i 's:cd \/opt\/java\/java-ea; \\:COPY NEWJDK\/ \/opt\/java\/java-ea:' $semeruDockerfile
             sed -i 's:tar -xf \/tmp\/openjdk.tar.gz --strip-components=1;:RUN \/opt\/java\/java-ea\/bin\/java --version:' $semeruDockerfile
-    
+
             mkdir NEWJDK
             cp -r $testJDKPath/. NEWJDK/
         else
@@ -70,7 +72,7 @@ prepare() {
         rm -f PingperfFiles.zip
         cp "$pingPerfZipPath" .
         unzip PingperfFiles.zip
-    else 
+    else
         echo "${pingPerfZipPath} does not exist."
         exit 1
     fi
@@ -81,12 +83,16 @@ prepare() {
     git clone https://github.com/OpenLiberty/ci.docker.git
     (
         cd ci.docker || exit
-        openLibertyBranch="instanton"
-        git checkout $openLibertyBranch
+        if [ "$OPENLIBERTY_SHA" != "" ]
+        then
+            git checkout $OPENLIBERTY_SHA
+        fi
         curCommitID=$(git rev-parse HEAD)
         echo "Using dockerfile from OpenLiberty/ci.docker repo branch $openLibertyBranch with commit hash $curCommitID"
+        
         libertyDockerfilePath="releases/latest/beta/Dockerfile.ubi.openjdk17"
-        sed -i 's;FROM icr.io\/appcafe\/ibm-semeru-runtimes:open-17-ea-jdk-ubi-amd64;FROM local-ibm-semeru-runtimes:latest;' $libertyDockerfilePath
+        # replace OpenLiberty dockerfile base image
+        sed -i 's/FROM icr.io\/appcafe\/ibm-semeru-runtimes:open-17-jdk-ubi/FROM local-ibm-semeru-runtimes:latest/g' $libertyDockerfilePath
     )
 }
 
@@ -99,7 +105,7 @@ buildImage() {
 
 createRestoreImage() {
     echo "create restore image $restoreImage ..."
-    sudo podman run --name ol-instanton-test-checkpoint-container --privileged --env WLP_CHECKPOINT=applications ol-instanton-test-pingperf:latest
+    sudo podman run --name ol-instanton-test-checkpoint-container --privileged --env WLP_CHECKPOINT=afterAppStart ol-instanton-test-pingperf:latest
     sudo podman commit ol-instanton-test-checkpoint-container $restoreImage
     sudo podman rm ol-instanton-test-checkpoint-container
 }
@@ -107,14 +113,13 @@ createRestoreImage() {
 unprivilegedRestore() {
     echo "unprivileged restore $restoreImage ..."
     echo -ne "CONTAINER_ID=" > containerId.log
+    echo "sudo podman run --rm --detach -p 9080:9080 --cap-add=CHECKPOINT_RESTORE --cap-add=SETPCAP $restoreImage"
     sudo podman run \
         --rm \
         --detach \
         -p 9080:9080 \
         --cap-add=CHECKPOINT_RESTORE \
-        --cap-add=NET_ADMIN \
-        --cap-add=SYS_PTRACE \
-        --security-opt seccomp=criuseccompprofile.json \
+        --cap-add=SETPCAP \
         $restoreImage >> containerId.log
 }
 
@@ -138,7 +143,7 @@ checkLog() {
     echo "check log ..."
     if [ -f ./containerId.log ]; then
         cat ./containerId.log
-    else 
+    else
         echo "./containerId.log does not exist."
         exit 1
     fi
@@ -205,7 +210,17 @@ getImageNameList() {
 				restore_docker_image_name_list+=("${DOCKER_REGISTRY_URL}/$docker_image_source_job_name:${build_number}")
     else
         echo "Testing all images from: ${docker_image_source_job_name}:${build_number}"
-        image_os_combo_list=($CRIU_XLINUX_COMBO_LIST)
+        # - is shell metacharacter. In PLATFORM value, replace - with _
+        echo "PLATFORM: ${PLATFORM}"
+        platValue=$(echo $PLATFORM | sed "s/-/_/")
+        comboList=CRIU_COMBO_LIST_$platValue
+        if [[ "$PLATFORM" =~ "linux_390-64" ]]; then
+            micro_architecture=$(echo $node_label_micro_architecture | sed "s/hw.arch.s390x.//")
+            comboList=$comboList_$micro_architecture
+        fi
+
+        image_os_combo_list="${!comboList}"
+        echo "${comboList}: ${image_os_combo_list}"
         for image_os_combo in ${image_os_combo_list[@]}
         do
             restore_docker_image_name_list+=("${DOCKER_REGISTRY_URL}/${docker_image_source_job_name}/pingperf_${JDK_VERSION}-${JDK_IMPL}-${docker_os}-${PLATFORM}-${image_os_combo}:${build_number}")
@@ -276,7 +291,7 @@ setup() {
     echo "NODE_LABELS: $NODE_LABELS"
     echo "PLATFORM: $PLATFORM"
     echo "uname -a: $(uname -a)"
-    
+
     if [ -n "$(cat /etc/redhat-release | grep 'Red Hat')" ]; then
         cat /etc/redhat-release
     fi
@@ -293,7 +308,7 @@ setup() {
     node_label_micro_architecture=""
     node_label_current_os=""
     for label in $NODE_LABELS
-    do 
+    do
         if [[ -z "$node_label_micro_architecture" && "$label" == "hw.arch."*"."* ]]; then #hw.arch.x86.skylake
             node_label_micro_architecture=$label
             echo "node_label_micro_architecture is $node_label_micro_architecture"

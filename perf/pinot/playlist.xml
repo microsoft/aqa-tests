@@ -31,38 +31,6 @@
 		</vendors>
 	</test>
 	<test>
-		<testCaseName>pinot-BenchmarkScanDocIdIterators</testCaseName>
-		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-BenchmarkScanDocIdIterators.sh$(Q); \
-			$(TEST_STATUS)
-		</command>
-		<levels>
-			<level>dev</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-		<vendors>
-			<vendor>microsoft</vendor>
-		</vendors>
-	</test>
-	<test>
-		<testCaseName>pinot-BenchmarkQueries</testCaseName>
-		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-BenchmarkQueries.sh$(Q); \
-			$(TEST_STATUS)
-		</command>
-		<levels>
-			<level>dev</level>
-		</levels>
-		<groups>
-			<group>perf</group>
-		</groups>
-		<vendors>
-			<vendor>microsoft</vendor>
-		</vendors>
-	</test>
-	<test>
 		<testCaseName>pinot-BenchmarkQueryEngine</testCaseName>
 		<command>
 			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-BenchmarkQueryEngine.sh$(Q); \
@@ -79,9 +47,9 @@
 		</vendors>
 	</test>
 	<test>
-		<testCaseName>pinot-BenchmarkPinotDataBuffer</testCaseName>
+		<testCaseName>pinot-BenchmarkRealtimeConsumptionSpeed</testCaseName>
 		<command>
-			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-BenchmarkPinotDataBuffer.sh$(Q); \
+			export JAVA_OPTS=$(JVM_OPTIONS); cd $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin$(Q); bash $(Q)$(TEST_RESROOT)$(D)pinot/apache-pinot-0.12.1-src/pinot-perf/target/pinot-perf-pkg/bin/pinot-BenchmarkRealtimeConsumptionSpeed.sh$(Q); \
 			$(TEST_STATUS)
 		</command>
 		<levels>

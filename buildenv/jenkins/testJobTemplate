@@ -51,7 +51,7 @@ if (!binding.hasVariable('DOCKER_REGISTRY_DIR')) DOCKER_REGISTRY_DIR = ""
 if (!binding.hasVariable('DOCKER_REGISTRY_URL_CREDENTIAL_ID')) DOCKER_REGISTRY_URL_CREDENTIAL_ID = ""
 if (!binding.hasVariable('SLACK_CHANNEL')) SLACK_CHANNEL = ""
 if (!binding.hasVariable('TRIGGER_SCHEDULE')) TRIGGER_SCHEDULE = ""
-if (!binding.hasVariable('LIGHT_WEIGHT_CHECKOUT')) LIGHT_WEIGHT_CHECKOUT = false
+if (!binding.hasVariable('LIGHT_WEIGHT_CHECKOUT')) LIGHT_WEIGHT_CHECKOUT = true
 if (!binding.hasVariable('NUM_MACHINES')) NUM_MACHINES = ""
 if (!binding.hasVariable('JDK_REPO')) JDK_REPO = ""
 if (!binding.hasVariable('JDK_BRANCH')) JDK_BRANCH = ""
@@ -350,7 +350,7 @@ ARCH_OS_LIST.each { ARCH_OS ->
 								When DYNAMIC_COMPILE is on: <br/>
 								- if there is no BUILD_LIST input, DYNAMIC_COMPILE will automatically figure out which test material to compile based on the test target.<br/>
 								- if there is BUILD_LIST input, the BUILD_LIST will be further refined based on the test target.''')
-							stringParam('TARGET', "${ACTUAL_TARGET}", 
+							stringParam('TARGET', "${ACTUAL_TARGET}",
 								    '''Test TARGET to execute, you can also select sub-targets such as:<br/>
                                                                        different level: sanity|extended|special<br/>
                                                                        different group: openjdk|system|jck|functional|perf|external<br/>

@@ -80,12 +80,13 @@ print_image_args() {
     local vm=$4
     local package=$5
     local build=$6
+    local base_docker_registry_dir="$7"
 
     image_name="eclipse-temurin"
     tag=""
     if [[ "${package}" == "jre" ]]; then
         tag="${version}-jre"
-    else 
+    else
         tag="${version}-jdk"
     fi
     if [[ "${vm}" == "openj9" ]]; then
@@ -94,8 +95,9 @@ print_image_args() {
             tag=open-${tag}
         else
             # os is ubi
-            image_name="registry.access.redhat.com/ubi8/ubi"
-            tag="8.6"
+            # temporarily all ubi based testing use internal base image
+            image_name="$DOCKER_REGISTRY_URL/$base_docker_registry_dir"
+            tag="latest"
         fi
     fi
     image="${image_name}:${tag}"
@@ -338,7 +340,7 @@ print_python_install() {
           "\nENV PYTHON_VERSION=\$PYTHON_VERSION" \
           "\n\n# Install python" \
           "\nRUN wget --progress=dot:mega -O python.tar.xz https://www.python.org/ftp/python/\${PYTHON_VERSION}/Python-\${PYTHON_VERSION}.tar.xz \\" >> ${file}
-    
+
     echo -e "\t&& tar -xJf python.tar.xz \\" \
             "\n\t&& cd Python-\${PYTHON_VERSION}  \\" \
             "\n\t&& ./configure --prefix=/usr/local \\" \
@@ -414,7 +416,7 @@ print_maven_install() {
           "\nENV MAVEN_HOME /opt/maven" \
           "\n\n# Install Maven" \
           "\nRUN  wget --no-verbose --no-check-certificate --no-cookies https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/\${MAVEN_VERSION}/apache-maven-\${MAVEN_VERSION}-bin.tar.gz \\" >> ${file}
-    
+
     echo -e "\t&& tar -zvxf apache-maven-\${MAVEN_VERSION}-bin.tar.gz -C /opt/ \\" \
             "\n\t&& ln -s /opt/apache-maven-\${MAVEN_VERSION} /opt/maven \\" \
             "\n\t&& rm -f apache-maven-\${MAVEN_VERSION}-bin.tar.gz" \
@@ -455,7 +457,7 @@ print_test_files() {
     local test=$2
     local localPropertyFile=$3
 
-    if [[ ${check_external_custom_test} -eq 1 ]]; then 
+    if [[ "$check_external_custom_test" == "1" ]]; then 
         echo -e "# This is the main script to run ${test} tests" \
                 "\nCOPY external_custom/test.sh /test.sh" \
                 "\nCOPY test_base_functions.sh test_base_functions.sh\n" >> ${file}
@@ -561,14 +563,15 @@ generate_dockerfile() {
     package=$6
     build=$7
     platform=$8
-    check_external_custom_test=$9
+    base_docker_registry_dir="$9"
+    check_external_custom_test=$10
 
 
-    if [[ ${check_external_custom_test} -eq 1 ]]; then
+    if [[ "$check_external_custom_test" == "1" ]]; then
         tag_version=${EXTERNAL_REPO_BRANCH}
     fi
 
-    if [[ ${check_external_custom_test} -eq 1 ]]; then
+    if [[ "$check_external_custom_test" == "1" ]]; then
         set_external_custom_test_info ${test} ${check_external_custom_test}
     else
         set_test_info ${test} ${check_external_custom_test}
@@ -581,7 +584,7 @@ generate_dockerfile() {
     echo -n "Writing ${file} ... "
     print_legal ${file};
     print_adopt_test ${file} ${test};
-    print_image_args ${file} ${os} ${version} ${vm} ${package} ${build};
+    print_image_args ${file} ${os} ${version} ${vm} ${package} ${build} "${base_docker_registry_dir}";
     print_result_comment_arg ${file};
     print_test_tag_arg ${file} ${test} ${tag_version};
     print_${os}_pkg ${file} "${!packages}";
@@ -621,7 +624,7 @@ generate_dockerfile() {
     if [[ ! -z ${jdk_install} ]]; then
         print_jdk_install ${file} ${os} ${platform};
     fi
-    
+
     if [[ ! -z ${maven_version} ]]; then
         print_maven_install ${file} ${maven_version};
     fi
@@ -640,7 +643,7 @@ generate_dockerfile() {
     print_clone_project ${file} ${test} ${github_url};
     print_test_files ${file} ${test} ${localPropertyFile};
 
-    if [[ ${check_external_custom_test} -eq 1 ]]; then
+    if [[ "$check_external_custom_test" == "1" ]]; then
         print_external_custom_parameters ${file}
     fi
     print_workdir ${file};
