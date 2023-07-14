@@ -20,4 +20,16 @@ Since SPECjbb requires a license to run, this aqa-test config requires that a li
 
 ## Run
 
- Calls [run_specjbb2015.sh](./run/run_specjbb2015.sh) to run the benchmark.
+13th Of July 2023
+
+NOTE for Microsoft Developers. This script was hastily extracted from the
+aqa-test perf lab framework to be used standalone. Some of the logical flow may
+come across as a little inverted due to this extraction process.
+
+Usage:
+
+1. Set the environment variables at the top of the [run_specjbb2015.sh](./run/run_specjbb2015.sh) script.
+2. Set the environment variables in the [run_specjbb-composite-config.sh](./run/options/specjbb-composite-config.sh) or
+    [run_specjbb-multijvm-config.sh](./run/options/specjbb-multijvm-config.sh) script depending on the mode you want to
+    run in
+3. [run_specjbb2015.sh](./run/run_specjbb2015.sh) - will run the benchmark and generate a report
