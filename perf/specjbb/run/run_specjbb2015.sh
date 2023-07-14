@@ -1,27 +1,82 @@
 #!/usr/bin/env bash
 
-##################################################################################
+###################################################################################
 #
-# 13th Of July 2023
+# run_specjbb2015.sh - 13th Of July 2023
 # 
-# NOTE for Microsoft Developers. This script was developed to deal with common 
-# SPECjbb2015 functionality. It in turn calls runSpecJbbMulti or runSpecJbbComposite
-# as required (runSpecJbbDistributed is TBD)
+# NOTE for Microsoft Developers. This script was hastily extracted from the 
+# aqa-test perf lab framework to be used standalone. Some of the logical flow may 
+# come across as a little inverted due to this extraction process.
 #
-# Cavaet Emptor - Use at your own risk.
-##################################################################################
+# Usage:
+#
+# 1. Set the environment variables at the top of this script
+# 2. Set the environment variables in the options/specjbb-composite-config.sh or 
+#    options/specjbb-multijvm-config.sh script depending on the mode you want to 
+#    run in
+# 3. ./run_specjbb2015.sh - this will run the benchmark and generate a report 
+# 
+###################################################################################
 
+###################################################################################
+# Environment Variables
+###################################################################################
 
-# source the affinity script so we can split up the CPUs correctly
+# Set your Java executable here
+# e.g, JAVA=/Library/Java/JavaVirtualMachines/microsoft-11.jdk/Contents/Home/bin/java
+JAVA=/Library/Java/JavaVirtualMachines/microsoft-11.jdk/Contents/Home/bin/java
+
+# Set the location of this project
+# e.g. export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
+export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
+# RUN_SCRIPTS_DIR & RUN_OPTIONS_DIR should not need altering
+RUN_SCRIPTS_DIR=$SPECJBB_BASEDIR/run
+RUN_OPTIONS_DIR=$SPECJBB_BASEDIR/run/options
+
+# Set the location of the extracted SPECjbb folder
+# e.g. export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
+export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
+# SPECJBB_JAR & SPECJBB_CONFIG should not need altering
+SPECJBB_JAR=$SPECJBB_SRC/specjbb2015.jar
+SPECJBB_CONFIG=$SPECJBB_SRC/config
+
+# The reports dir will get created by this script so don't create it up front
+RESULTS_DIR=$SPECJBB_BASEDIR/reports
+
+# Set the mode you want to run in: composite, multi-jvm or distributed (not supported yet)
+#export MODE="composite"
+export MODE="multi-jvm"
+#export MODE="distributed"
+
+###################################################################################
+# Source common scripts
+###################################################################################
+
+# source the affinity script so we can split up the CPUs correctly when using NUMA
 . "../../../perf/affinity.sh"
 
-# Source in utility functions you can use for any benchmark
+# Source in utility functions you can use for any benchmark (clean caches etc)
 . "../../../perf/benchmark_setup.sh"
 
-# echo out what our config is set to
+###################################################################################
+# Functions
+###################################################################################
+
+###################################################################################
+# showConfig() - echo out what our config is set to
+###################################################################################
 function showConfig() {
   echo "=========================================================="
+  echo "SPECjbb2015 Configuration"
+  echo "SPECJBB_BASEDIR: ${SPECJBB_BASEDIR}"
+  echo "JAVA: ${JAVA}"
+  echo "SPECJBB_JAR: ${SPECJBB_JAR}"
+  echo "SPECJBB_CONFIG: ${SPECJBB_CONFIG}"
+  echo "RUN_SCRIPTS_DIR: ${RUN_SCRIPTS_DIR}"
+  echo "RUN_OPTIONS_DIR: ${RUN_OPTIONS_DIR}"
+  echo "RESULTS_DIR: ${RESULTS_DIR}"
   echo "Mode: ${MODE}"
+  echo ""
   echo "Number of Runs: ${NUM_OF_RUNS}"
   echo "Number of Groups: ${GROUP_COUNT}"
   echo "Number of Transaction Injectors: ${TI_JVM_COUNT}"
@@ -32,13 +87,10 @@ function showConfig() {
   echo "=========================================================="
 }
 
-# The make script passes in variables as strings and so we need to remove quotes and potentially other special characters
-sanitizeIncomingVariables() {
-    JAVA="${JAVA%\"}"
-    JAVA="${JAVA#\"}"
-}
-
-# The main run script for SPECjbb2015 in MultiJVM mode
+###################################################################################
+# runSpecJbbMulti() The main run script for SPECjbb2015 in MultiJVM mode
+# TODO Refactor alongside runSpecJbbMultiJVM() to remove duplication
+###################################################################################
 function runSpecJbbMulti() {
 
   for ((runNumber=1; runNumber<=NUM_OF_RUNS; runNumber=runNumber+1)); do
@@ -48,7 +100,8 @@ function runSpecJbbMulti() {
     timestamp=$(date +%Y%m%d_%H%M%S)
 
     # Some O/S setup before each run, see "../../../perf/benchmark_setup.sh"
-    beforeEachRun
+    # TODO reenable
+    #beforeEachRun
 
     # Create temp result directory                
     local result
@@ -66,8 +119,6 @@ function runSpecJbbMulti() {
     echo
     echo "Run $runNumber: $timestamp"
     echo
-
-    sanitizeIncomingVariables
 
     echo "Starting the Controller JVM"
     # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
@@ -113,12 +164,15 @@ function runSpecJbbMulti() {
           
           # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
           # shellcheck disable=SC2086
-          local transactionInjectorCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
+          # TODO reenable
+          #local transactionInjectorCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
+          local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
           echo "$transactionInjectorCommand"
           eval "${transactionInjectorCommand}"
           echo -e "\t${transactionInjectorName} PID = $!"
 
-          # Sleep for 1 second to allow each transaction injector JVM to start. TODO this seems arbitrary
+          # TODO this seems arbitrary, we should detect the actual start of the TI
+          # Sleep for 1 second to allow each transaction injector JVM to start.
           sleep 1
       done
 
@@ -131,17 +185,18 @@ function runSpecJbbMulti() {
       echo "Start $BE_NAME"
       # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
       # shellcheck disable=SC2086
-      local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
+      # TODO reenable
+      #local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
+      local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
       echo "$backendCommand"
       eval "${backendCommand}"
       echo -e "\t$BE_NAME PID = $!"
 
-      # TODO 1 second seems arbitrary
+      # TODO this seems arbitrary, we should detect the actual start of the BE
       # Sleep for 1 second to allow each backend JVM to start.
       sleep 1
 
       # Increment the CPU count so that we use a new range for the next run
-      # TODO This is actually pointless as we have ru = 1 n and group = 1 in our current experiment
       cpucount=$((cpucount+1))
     done
 
@@ -161,7 +216,11 @@ function runSpecJbbMulti() {
   done
 }
 
-# The main run script for SPECjbb2015 in Composite mode
+###################################################################################
+# runSpecJbbComposite() The main run script for SPECjbb2015 in MultiJVM mode
+#
+# TODO Refactor alongside runSpecJbbMultiJVM() to remove duplication
+###################################################################################
 function runSpecJbbComposite() {
 
   for ((runNumber=1; runNumber<=NUM_OF_RUNS; runNumber=runNumber+1)); do
@@ -171,7 +230,8 @@ function runSpecJbbComposite() {
     timestamp=$(date +%Y%m%d_%H%M%S)
 
     # Some O/S setup before each run
-    beforeEachRun
+    # TODO reenable
+    #beforeEachRun
 
     # Create temp result directory                
     local result
@@ -190,8 +250,6 @@ function runSpecJbbComposite() {
     echo "Run $runNumber: $timestamp"
     echo
 
-    sanitizeIncomingVariables
-
     local cpuCount=0
 
     getTotalCPUs
@@ -206,13 +264,15 @@ function runSpecJbbComposite() {
     local backendJvmId=beJVM
     local backendName="$groupId.Backend.${backendJvmId}"
     
-    # Add GC logging to the backend's JVM options. We use the recommended settings for Microsoft's internal GC analysis tool called Censum
+    # Add GC logging to the backend's JVM options. We use the recommended settings for GCToolkit (https://www.github.com/microsoft/gctoolkit).
     JAVA_OPTS_BE_WITH_GC_LOG="$JAVA_OPTS_BE -Xlog:gc*,gc+ref=debug,gc+phases=debug,gc+age=trace,safepoint:file=${backendName}_gc.log"
 
     echo "Start $BE_NAME"
     # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
     # shellcheck disable=SC2086
-    local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_C} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m COMPOSITE ${MODE_ARGS_BE} 2>&1 | tee composite.out &"
+    # TODO reenable
+    #local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_C} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m COMPOSITE ${MODE_ARGS_BE} 2>&1 | tee composite.out &"
+    local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_C} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m COMPOSITE ${MODE_ARGS_BE} 2>&1 | tee composite.out &"
     echo "$backendCommand"
     eval "${backendCommand}"
     local compositePid=$!
@@ -220,8 +280,8 @@ function runSpecJbbComposite() {
     sleep 3
 
     # Increment the CPU count so that we use a new range for the next run
-    # TODO This is actually pointless as run and group = 1 in our current experiment
-    # cpucount=$((cpucount+1))
+    cpucount=$((cpucount+1))
+    
     echo
     echo "SPECjbb2015 is running..."
     echo "Please monitor $result/composite.out for progress"
@@ -235,17 +295,22 @@ function runSpecJbbComposite() {
   done
 }
 
-showConfig
-checkNumaReadiness
+# TODO reenable 
+#checkNumaReadiness
 
 if [ "$MODE" == "multi-jvm" ]; then
     echo "Running in MultiJVM mode"
+    . "./options/specjbb-multijvm-config.sh"
+    showConfig
     runSpecJbbMulti
 elif [ "$MODE" == "composite" ]; then
     echo "Running in Composite mode"
+    . "./options/specjbb-composite-config.sh"
+    showConfig
     runSpecJbbComposite
 elif [ "$MODE" == "distributed" ]; then
     echo "Running in Distributed mode"
+    showConfig
     runSpecJbbDistributed
 fi
 

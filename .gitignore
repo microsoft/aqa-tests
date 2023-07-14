@@ -29,3 +29,6 @@ openjdk/*.gz
 .vscode/
 
 openj9/
+
+# Reports folder
+**/reports/
