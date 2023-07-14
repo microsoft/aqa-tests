@@ -1,7 +1,20 @@
 #!/usr/bin/env bash
 
+##################################################################################
+#
+# 13th Of July 2023
+# 
+# NOTE for Microsoft Developers. This script was developed to provide some common 
+# functions to  been taken as is from the 
+# Eclipse Adoptium aqa-test project.  It is used to set the affinity of the
+# CPUs for a wide variety of platforms but it has not been modernized (shellcheck 
+# fixes applied etc).
+#
+# Cavaet Emptor - Use at your own risk.
+##################################################################################
+
 # Function to determine what is set in terms of NUMA and possibly others et al
-function checkHostReadiness() {
+function checkNumaReadiness() {
   echo "=========================================================="
   echo "Running numactl --show to determine if/how numa is enabled"
   echo 
@@ -46,7 +59,7 @@ function beforeEachRun() {
     # interface in the Linux kernel for managing how users can use THP.
     # madvise: Will allow the JVM to select what to use it for (heap only).
     # Note, the user needs permission to write to this file (we use sudo tee for this)
-    # TODO That cehck could be a proper check and not just catting output
+    # TODO That check could be a proper check and not just catting output
     echo "Setting madvise for THP                                      "
     echo madvise | sudo tee /sys/kernel/mm/transparent_hugepage/enabled
     echo 

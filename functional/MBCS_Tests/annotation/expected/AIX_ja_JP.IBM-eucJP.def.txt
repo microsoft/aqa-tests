@@ -1,8 +1,0 @@
-Compiled from "AnnotatedTest.java"
-public class AnnotatedTest {
-  public java.lang.String 戳机山绩墙蜗カナ幎幣ＫａｎａKana淡规★●◎嘲机彴⿵舳嘲机忬珡蟋忬瓘螽_1;
-  public int 戳机山绩墙蜗カナ幎幣ＫａｎａKana淡规★●◎嘲机彴⿵舳嘲机忬珡蟋忬瓘螽_2;
-  public AnnotatedTest();
-  public void 戳机山绩墙蜗カナ幎幣ＫａｎａKana淡规★●◎嘲机彴⿵舳嘲机忬珡蟋忬瓘螽_1();
-  public void 戳机山绩墙蜗カナ幎幣ＫａｎａKana淡规★●◎嘲机彴⿵舳嘲机忬珡蟋忬瓘螽_2();
-}

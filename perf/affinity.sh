@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 
-################################################################################
+##################################################################################
+#
+# 13th Of July 2023
+# 
+# NOTE for Microsoft Developers. This script has been taken as is from the 
+# Eclipse Adoptium aqa-test project. It is used to set the affinity of the
+# CPUs for a wide variety of platforms but it has not been modernized 
+# (shellcheck fixes applied etc.).
+#
+# Cavaet Emptor - Use at your own risk.
+##################################################################################
+
+##################################################################################
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,12 +24,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-################################################################################
+##################################################################################
 
-##################################
+##################################################################################
 # Usage
 #
 # There are 2 large commands that set environment variables:
+#
 #  - setServerDBLoadAffinities
 #  - setServerLoadAffinities
 # ```
@@ -43,7 +56,7 @@
 # i.e. 0-7,14-22 on linux
 # i.e. ff on windows
 
-#########################
+##################################################################################
 # Dependencies
 #
 # These are the programs that need to be installed in order for this script to run
@@ -68,6 +81,7 @@
 #  - oeconsol
 # Mac:
 #  - sysctl
+##################################################################################
 
 # Given, the number of cpus for the server, set up a
 # 3-way cpu split allocation between a server, a database and a load.
@@ -85,8 +99,8 @@
 # be consumed by docker or numactl commands
 # LOAD_NODE - the node load cpus will be on
 # SERVER_AFFINITY_CMD - command used to bind a process to the server cpus
-# LOAD_AFFINITY_CMD - command used to bind a proess to the load cpus
-# DB_AFFINITY_CMD - command used to bind a proess to the database cpus
+# LOAD_AFFINITY_CMD - command used to bind a process to the load cpus
+# DB_AFFINITY_CMD - command used to bind a process to the database cpus
 #
 # args:
 # --server-physcpu-num i: allocate i number of physical cpus for the server
@@ -191,7 +205,7 @@ function setServerDBLoadAffinities() {
 # LOAD_NODE - the node load cpus will be on
 # be consumed by docker or numactl commands
 # SERVER_AFFINITY_CMD - command used to bind a process to the server cpus
-# LOAD_AFFINITY_CMD - command used to bind a proess to the load cpus
+# LOAD_AFFINITY_CMD - command used to bind a process to the load cpus
 # 
 # args:
 # --server-physcpu-num i: allocate i number of physical cpus for the server
@@ -287,7 +301,7 @@ function setServerLoadAffinities() {
 # DB_NODE - the node database cpus will be on
 # be consumed by docker or numactl commands
 # SERVER_AFFINITY_CMD - command used to bind a process to the server cpus
-# DB_AFFINITY_CMD - command used to bind a proess to the database cpus
+# DB_AFFINITY_CMD - command used to bind a process to the database cpus
 # 
 # args:
 # --server-physcpu-num i: allocate i number of physical cpus for the server
@@ -1387,7 +1401,7 @@ function get_cpus() {
 	echo $RESULT
 }
 
-# Checks whether the affinity tool is intalled/supported
+# Checks whether the affinity tool is installed/supported
 # If the tool is not installed/supported, it unsets all the affinity variables
 # This helps in avoiding errors while running some java command with affinity when affinity tool is missing
 
@@ -1395,7 +1409,7 @@ function affinity_tool_install_check() {
 
 	${SERVER_AFFINITY_CMD} java -version > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
-	    echo "Affinity tool is intalled/supported."
+	    echo "Affinity tool is installed/supported."
 	else
 	    echo "Warning!!! Affinity tool is NOT installed/supported. Unsetting affinity variables: SERVER_AFFINITY_CMD, LOAD_AFFINITY_CMD, & DB_AFFINITY_CMD"
 	    unset SERVER_AFFINITY_CMD LOAD_AFFINITY_CMD DB_AFFINITY_CMD

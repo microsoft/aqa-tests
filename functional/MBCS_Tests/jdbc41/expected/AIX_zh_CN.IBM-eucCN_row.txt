@@ -1,5 +1,0 @@
-Execute SELECT by jdbc41RowSetProvider.
-1,°¡¡î
-2,ANSIString2
-3,£Á£Â£ÃÒ»¶¡Æß£¯£Ü¡«
-4,ABCCDE/\!

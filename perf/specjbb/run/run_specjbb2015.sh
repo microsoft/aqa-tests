@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+##################################################################################
+#
+# 13th Of July 2023
+# 
+# NOTE for Microsoft Developers. This script was developed to deal with common 
+# SPECjbb2015 functionality. It in turn calls runSpecJbbMulti or runSpecJbbComposite
+# as required (runSpecJbbDistributed is TBD)
+#
+# Cavaet Emptor - Use at your own risk.
+##################################################################################
+
+
 # source the affinity script so we can split up the CPUs correctly
 . "../../../perf/affinity.sh"
 
@@ -60,7 +72,7 @@ function runSpecJbbMulti() {
     echo "Starting the Controller JVM"
     # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
     # shellcheck disable=SC2086
-    # TODO check with Monica, won't the controller interfere with the cpu Range of 0-63 that we have resevered for the TI and BE here?
+    # TODO check with Monica, won't the controller interfere with the cpu Range of 0-63 that we have reserved for the TI and BE here?
     local controllerCommand="${JAVA} ${JAVA_OPTS_C} ${SPECJBB_OPTS_C} -jar ${SPECJBB_JAR} -m MULTICONTROLLER ${MODE_ARGS_C} 2>controller.log 2>&1 | tee controller.out &"
     echo "$controllerCommand"
     eval "${controllerCommand}"
@@ -85,7 +97,7 @@ function runSpecJbbMulti() {
 
       echo -e "\nStarting Transaction Injector JVMs for group $groupId:"
 
-      # Calculate CPUs avaialble via NUMA for this run. We use some math to create a CPU range string
+      # Calculate CPUs available via NUMA for this run. We use some math to create a CPU range string
       # E.g if totalCpuCount is 64, then we should use 0-63
       local cpuInit=$((cpuCount*TOTAL_CPU_COUNT))                 # e.g., 0 * 64 = 0
       local cpuMax=$(($(($((cpuCount+1))*TOTAL_CPU_COUNT))-1))    # e.g., 1 * 64 - 1 = 63
@@ -184,7 +196,7 @@ function runSpecJbbComposite() {
 
     getTotalCPUs
 
-    # Calculate CPUs avaialble via NUMA for this run. We use some math to create a CPU range string
+    # Calculate CPUs available via NUMA for this run. We use some math to create a CPU range string
     # E.g if totalCpuCount is 64, then we should use 0-63
     local cpuInit=$((cpuCount*TOTAL_CPU_COUNT))                 # e.g., 0 * 64 = 0
     local cpuMax=$(($(($((cpuCount+1))*TOTAL_CPU_COUNT))-1))    # e.g., 1 * 64 - 1 = 63
@@ -194,7 +206,7 @@ function runSpecJbbComposite() {
     local backendJvmId=beJVM
     local backendName="$groupId.Backend.${backendJvmId}"
     
-    # Add GC logging to the backend's JVM options. We use the recommendended settings for Microsoft's internal GC analysis tool called Censum
+    # Add GC logging to the backend's JVM options. We use the recommended settings for Microsoft's internal GC analysis tool called Censum
     JAVA_OPTS_BE_WITH_GC_LOG="$JAVA_OPTS_BE -Xlog:gc*,gc+ref=debug,gc+phases=debug,gc+age=trace,safepoint:file=${backendName}_gc.log"
 
     echo "Start $BE_NAME"
@@ -224,7 +236,7 @@ function runSpecJbbComposite() {
 }
 
 showConfig
-checkHostReadiness
+checkNumaReadiness
 
 if [ "$MODE" == "multi-jvm" ]; then
     echo "Running in MultiJVM mode"
