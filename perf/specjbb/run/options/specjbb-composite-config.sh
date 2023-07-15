@@ -33,6 +33,9 @@ export TI_JVM_COUNT=1
 # This section will configure the works, thread counts and saturation
 # Please refer to the Java Engineering Group, Azure Compute and SPECjbb2015 user 
 # guides and configuration spreadsheets for more details
+# 
+# e.g. Configuration for a Maxed out (from a scaling perspective) Standard_D64s_v5 
+# run as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
 #
 ###################################################################################
 export TIER1=128
@@ -41,7 +44,6 @@ export TIER3=24
 export THREADS_SATURATION=96
 export SELECTOR_RUNNER_COUNT=10
 
-# e.g. Configuration for a Maxed out (from a scaling perspective) Standard_D64s_v5 run as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
 export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=$TIER1 -Dspecjbb.forkjoin.workers.Tier2=$TIER2 -Dspecjbb.forkjoin.workers.Tier3=$TIER3 -Dspecjbb.customerDriver.threads.saturate=$THREADS_SATURATION -Dspecjbb.comm.connect.selector.runner.count=$SELECTOR_RUNNER_COUNT"
 export SPECJBB_OPTS_TI=""
 export SPECJBB_OPTS_BE=""
@@ -64,11 +66,12 @@ export SPECJBB_OPTS_BE=""
 # This implies that a machine should have at least 8GB of memory and 8 CPU cores to run this test
 export JAVA_OPTS_C="-Xms2g -Xmx2g -Xmn1536m -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:CICompilerCount=4"
 export JAVA_OPTS_TI="${JAVA_OPTS_C}"
+
+# Default configuration for BE
 # export JAVA_OPTS_BE="-Xms4g -Xmx4g -Xmn3g -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:-UseAdaptiveSizePolicy" # Default configuration
 
 # Configuration for a Maxed out (from a scaling perspective) Standard_D64s_v5 run as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
-#export JAVA_OPTS_BE="-Xms192g -Xmx192g -Xmn173g -XX:+UseParallelGC -XX:ParallelGCThreads=64 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-export JAVA_OPTS_BE="-Xms192g -Xmx192g -Xmn173g -XX:+UseParallelGC -XX:ParallelGCThreads=64 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+export JAVA_OPTS_BE="-Xms192g -Xmx192g -Xmn173g -XX:+UseParallelGC -XX:ParallelGCThreads=64 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 
 ###################################################################################
 # Extra Controller Configuration

@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+##################################################################################
+#
+# 13th Of July 2023
+# 
+# NOTE for Microsoft Developers. This script has been taken 'as is' from the 
+# Eclipse Adoptium aqa-test project. It is used by the affinity.sh script but has 
+# not been modernized (shellcheck fixes applied etc.).
+#
+##################################################################################
+
 ################################################################################
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +23,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ################################################################################
-
 
 SERVER_PHYSCPU_NUM=2
 SMT=true

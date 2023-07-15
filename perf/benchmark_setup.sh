@@ -5,15 +5,14 @@
 # 13th Of July 2023
 # 
 # NOTE for Microsoft Developers. This script was developed to provide some common 
-# functions to  been taken as is from the 
-# Eclipse Adoptium aqa-test project.  It is used to set the affinity of the
-# CPUs for a wide variety of platforms but it has not been modernized (shellcheck 
-# fixes applied etc).
+# functions that you can call if you want to use them for benchmarking. e.g., The 
+# Java Engineering Group typically calls these functions for SPECjbb runs
 #
-# Cavaet Emptor - Use at your own risk.
 ##################################################################################
 
-# Function to determine what is set in terms of NUMA and possibly others et al
+##################################################################################
+# checkNumaReadiness() - Function to determine if NUMA is enabled
+##################################################################################
 function checkNumaReadiness() {
   echo "=========================================================="
   echo "Running numactl --show to determine if/how numa is enabled"
@@ -22,7 +21,9 @@ function checkNumaReadiness() {
   echo "=========================================================="
 }
 
-# Get the total CPU count from the affinity.sh script
+##################################################################################
+# getTotalCPUs() Get the total CPU count from the ./affinity.sh script
+##################################################################################
 TOTAL_CPU_COUNT=0
 function getTotalCPUs() {
     
@@ -38,7 +39,13 @@ function getTotalCPUs() {
     export TOTAL_CPU_COUNT
 }
 
-# Make sure the O/S disks and memory et al are cleared before a run
+##################################################################################
+# beforeEachRun() Make sure the O/S disks and memory are cleared before each run
+# Also sets madvise for THP support
+#
+# TODO Should probably split each of these out into their own functions
+#
+##################################################################################
 function beforeEachRun() {
     # Call sync to force any pending disk writes. Note the user typically needs to be in the sudoers file for this to work.
     echo "============================================================="
@@ -67,5 +74,4 @@ function beforeEachRun() {
     echo 
     cat /sys/kernel/mm/transparent_hugepage/enabled
     echo "============================================================="
-
 }

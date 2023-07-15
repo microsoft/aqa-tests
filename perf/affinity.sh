@@ -4,12 +4,11 @@
 #
 # 13th Of July 2023
 # 
-# NOTE for Microsoft Developers. This script has been taken as is from the 
+# NOTE for Microsoft Developers. This script has been taken 'as is' from the 
 # Eclipse Adoptium aqa-test project. It is used to set the affinity of the
 # CPUs for a wide variety of platforms but it has not been modernized 
 # (shellcheck fixes applied etc.).
 #
-# Cavaet Emptor - Use at your own risk.
 ##################################################################################
 
 ##################################################################################

@@ -24,18 +24,18 @@
 
 # Set your Java executable here
 # e.g, JAVA=/Library/Java/JavaVirtualMachines/microsoft-11.jdk/Contents/Home/bin/java
-JAVA=/Library/Java/JavaVirtualMachines/microsoft-11.jdk/Contents/Home/bin/java
+JAVA=
 
 # Set the location of this project
 # e.g. export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
-export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
+export SPECJBB_BASEDIR=
 # RUN_SCRIPTS_DIR & RUN_OPTIONS_DIR should not need altering
 RUN_SCRIPTS_DIR=$SPECJBB_BASEDIR/run
 RUN_OPTIONS_DIR=$SPECJBB_BASEDIR/run/options
 
 # Set the location of the extracted SPECjbb folder
 # e.g. export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
-export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
+export SPECJBB_SRC=
 # SPECJBB_JAR & SPECJBB_CONFIG should not need altering
 SPECJBB_JAR=$SPECJBB_SRC/specjbb2015.jar
 SPECJBB_CONFIG=$SPECJBB_SRC/config
@@ -89,7 +89,9 @@ function showConfig() {
 
 ###################################################################################
 # runSpecJbbMulti() The main run script for SPECjbb2015 in MultiJVM mode
-# TODO Refactor alongside runSpecJbbMultiJVM() to remove duplication
+# 
+# TODO Refactor alongside runSpecJbbComposite() to remove duplication
+#
 ###################################################################################
 function runSpecJbbMulti() {
 
@@ -100,8 +102,7 @@ function runSpecJbbMulti() {
     timestamp=$(date +%Y%m%d_%H%M%S)
 
     # Some O/S setup before each run, see "../../../perf/benchmark_setup.sh"
-    # TODO reenable
-    #beforeEachRun
+    beforeEachRun
 
     # Create temp result directory                
     local result
@@ -164,9 +165,7 @@ function runSpecJbbMulti() {
           
           # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
           # shellcheck disable=SC2086
-          # TODO reenable
-          #local transactionInjectorCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
-          local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
+          local transactionInjectorCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
           echo "$transactionInjectorCommand"
           eval "${transactionInjectorCommand}"
           echo -e "\t${transactionInjectorName} PID = $!"
@@ -185,9 +184,7 @@ function runSpecJbbMulti() {
       echo "Start $BE_NAME"
       # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
       # shellcheck disable=SC2086
-      # TODO reenable
-      #local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
-      local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
+      local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
       echo "$backendCommand"
       eval "${backendCommand}"
       echo -e "\t$BE_NAME PID = $!"
@@ -220,6 +217,7 @@ function runSpecJbbMulti() {
 # runSpecJbbComposite() The main run script for SPECjbb2015 in MultiJVM mode
 #
 # TODO Refactor alongside runSpecJbbMultiJVM() to remove duplication
+#
 ###################################################################################
 function runSpecJbbComposite() {
 
@@ -230,8 +228,7 @@ function runSpecJbbComposite() {
     timestamp=$(date +%Y%m%d_%H%M%S)
 
     # Some O/S setup before each run
-    # TODO reenable
-    #beforeEachRun
+    beforeEachRun
 
     # Create temp result directory                
     local result
@@ -270,9 +267,7 @@ function runSpecJbbComposite() {
     echo "Start $BE_NAME"
     # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
     # shellcheck disable=SC2086
-    # TODO reenable
-    #local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_C} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m COMPOSITE ${MODE_ARGS_BE} 2>&1 | tee composite.out &"
-    local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_C} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m COMPOSITE ${MODE_ARGS_BE} 2>&1 | tee composite.out &"
+    local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_C} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m COMPOSITE ${MODE_ARGS_BE} 2>&1 | tee composite.out &"
     echo "$backendCommand"
     eval "${backendCommand}"
     local compositePid=$!
@@ -295,8 +290,7 @@ function runSpecJbbComposite() {
   done
 }
 
-# TODO reenable 
-#checkNumaReadiness
+checkNumaReadiness
 
 if [ "$MODE" == "multi-jvm" ]; then
     echo "Running in MultiJVM mode"
