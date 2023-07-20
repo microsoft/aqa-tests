@@ -23,20 +23,20 @@
 ###################################################################################
 
 # Set your Java executable here
-# e.g, JAVA=/Library/Java/JavaVirtualMachines/microsoft-11.jdk/Contents/Home/bin/java
+# e.g, JAVA=/usr/lib/jvm/java-17-openjdk-arm64/bin/java
 JAVA=
 
 # Set the location of this project
-# e.g. export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
-export SPECJBB_BASEDIR=
+# e.g. export SPECJBB_BASEDIR=/home/username/workspace/microsoft/aqa-tests/perf/specjbb
 # RUN_SCRIPTS_DIR & RUN_OPTIONS_DIR should not need altering
+export SPECJBB_BASEDIR=
 RUN_SCRIPTS_DIR=$SPECJBB_BASEDIR/run
 RUN_OPTIONS_DIR=$SPECJBB_BASEDIR/run/options
 
 # Set the location of the extracted SPECjbb folder
-# e.g. export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
-export SPECJBB_SRC=
+# e.g. export SPECJBB_SRC=/home/username/workspace/microsoft/workspace/SPECjbb2015-1.03
 # SPECJBB_JAR & SPECJBB_CONFIG should not need altering
+export SPECJBB_SRC=
 SPECJBB_JAR=$SPECJBB_SRC/specjbb2015.jar
 SPECJBB_CONFIG=$SPECJBB_SRC/config
 
@@ -52,7 +52,7 @@ export MODE="multi-jvm"
 # Source common scripts
 ###################################################################################
 
-# source the affinity script so we can split up the CPUs correctly when using NUMA
+# Source the affinity script so we can split up the CPUs correctly when using NUMA
 . "../../../perf/affinity.sh"
 
 # Source in utility functions you can use for any benchmark (clean caches etc)
@@ -92,6 +92,17 @@ function showConfig() {
 # 
 # TODO Refactor alongside runSpecJbbComposite() to remove duplication
 #
+# You can have => 1 number of runs. We recommend 1 run to start with.
+# 
+# Each run uses a single Controller
+# Each Controller can control X Groups
+# Each Group contains Y TransactionInjectors and 1 Backend.
+#
+# We recommend running with 1 Group containing 1 TI and 1 BE to start with.
+# 
+# On NUMA enabled hosts we attempt to calculate the number of CPUs per group but 
+# you will likely want to manually override that number.
+#
 ###################################################################################
 function runSpecJbbMulti() {
 
@@ -116,33 +127,42 @@ function runSpecJbbMulti() {
     
     # Start logging
     echo "==============================================="
-    echo "Launching SPECjbb2015 in ${MODE} mode...       "
+    echo "Launching SPECjbb2015 in multi-jvm mode...     "
     echo
     echo "Run $runNumber: $timestamp"
-    echo
-
+    echo    
     echo "Starting the Controller JVM"
+    
     # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
     # shellcheck disable=SC2086
-    # TODO check with Monica, won't the controller interfere with the cpu Range of 0-63 that we have reserved for the TI and BE here?
     local controllerCommand="${JAVA} ${JAVA_OPTS_C} ${SPECJBB_OPTS_C} -jar ${SPECJBB_JAR} -m MULTICONTROLLER ${MODE_ARGS_C} 2>controller.log 2>&1 | tee controller.out &"
     echo "$controllerCommand"
     eval "${controllerCommand}"
 
-    # Save the PID of the Controller JVM
+    # Save the PID of the Controller JVM so we can report on it later
+    # Sleep for 3 seconds for the controller to start.
+    # TODO This is brittle, let's detect proper controller start-up
     CTRL_PID=$!
     echo "Controller PID: $CTRL_PID"
-
-    # TODO This is brittle, let's detect proper controller start-up
-    # Sleep for 3 seconds for the controller to start.
     sleep 3
 
+    # Index variable used to help calculate the cpuRange if we have multiple groups and NUMA enabled
     local cpuCount=0
 
-    # Get the cpu count, see "../../../perf/benchmark_setup.sh"
+    # Get the cpu count, see "../../../perf/benchmark_setup.sh", results lives in TOTAL_CPU_COUNT
     getTotalCPUs
+    # Manually override the total CPU count if you do not want to use all detected cores
+    #TOTAL_CPU_COUNT=
+    
+    # Calculate the total number of CPUs available for each group
+    # By default we take 1 CPU away for O/S operations and 1 CPU away for the Controller
+    # and split up the rest (bash shell script rounds down)
+    # Manually override the number of CPUs per group if you want set that manually
+    CPUS_PER_GROUP=$(TOTAL_CPU_COUNT-2)/$GROUP_COUNT
+    #CPUS_PER_GROUP=
 
-    # Start the TransactionInjector and Backend JVMs for each group
+    # Start the TransactionInjector JVMs and the Backend JVM for each group, the Controller 
+    # will eventually connect and the benchmark will start
     for ((groupNumber=1; groupNumber<GROUP_COUNT+1; groupNumber=groupNumber+1)); do
 
       local groupId="Group$groupNumber"
@@ -150,10 +170,11 @@ function runSpecJbbMulti() {
       echo -e "\nStarting Transaction Injector JVMs for group $groupId:"
 
       # Calculate CPUs available via NUMA for this run. We use some math to create a CPU range string
-      # E.g if totalCpuCount is 64, then we should use 0-63
-      local cpuInit=$((cpuCount*TOTAL_CPU_COUNT))                 # e.g., 0 * 64 = 0
-      local cpuMax=$(($(($((cpuCount+1))*TOTAL_CPU_COUNT))-1))    # e.g., 1 * 64 - 1 = 63
-      local cpuRange="${cpuInit}-${cpuMax}"                       # e.g., 0-63
+      # TOTAL_CPU_COUNT comes from ../../benchmark_setup.sh
+      # e.g., For 64 cores per group and 2 groups                 # Group 1                 Group 2
+      local cpuInit=$((cpuCount*CPUS_PER_GROUP))                  # e.g., 0 * 64 = 0        1 * 64 = 64
+      local cpuMax=$(($(($((cpuCount+1))*CPUS_PER_GROUP))-1))     # e.g., 1 * 64 - 1 = 63   2 * 64 - 1 = 127
+      local cpuRange="${cpuInit}-${cpuMax}"                       # e.g., 0-63              64-127
       echo "cpuRange is: $cpuRange"
 
       for ((injectorNumber=1; injectorNumber<TI_JVM_COUNT+1; injectorNumber=injectorNumber+1)); do
@@ -170,8 +191,8 @@ function runSpecJbbMulti() {
           eval "${transactionInjectorCommand}"
           echo -e "\t${transactionInjectorName} PID = $!"
 
-          # TODO this seems arbitrary, we should detect the actual start of the TI
           # Sleep for 1 second to allow each transaction injector JVM to start.
+          # TODO this seems arbitrary, we should detect the actual start of the TI
           sleep 1
       done
 
@@ -189,8 +210,8 @@ function runSpecJbbMulti() {
       eval "${backendCommand}"
       echo -e "\t$BE_NAME PID = $!"
 
-      # TODO this seems arbitrary, we should detect the actual start of the BE
       # Sleep for 1 second to allow each backend JVM to start.
+      # TODO this seems arbitrary, we should detect the actual start of the BE
       sleep 1
 
       # Increment the CPU count so that we use a new range for the next run

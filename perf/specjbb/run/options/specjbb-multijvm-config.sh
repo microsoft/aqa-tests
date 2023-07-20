@@ -12,15 +12,21 @@
 #
 # TODO: A possible refactoring would be to allow most of these variables to be 
 #       passed in by a calling framework.
+# TODO: A alternative possible refactoring would be to not have individual
+#       variables for all of these values and simply have a list of command line 
+#       arguments that could be commented in/out.
 # TODO: A possible refactoring would allow shared config with the composite mode
 #  
 ###################################################################################
 
 ###################################################################################
-# Looping Factors
+# Groups and Looping Factors
 #
 # This section configures the looping of a SPECjbb run in multi-jvm mode
-# e.g., 1 group consisting of 1 TransactionInjector and 1 Backend
+# e.g., 1 Controller is used to control X groups, of which each group consists of 
+#       Y TransactionInjectors and 1 Backend
+#
+# When running on NUMA hardware, a Group should be mapped to a NUMA node.
 #
 ###################################################################################
 export GROUP_COUNT=1
@@ -56,21 +62,33 @@ export SPECJBB_OPTS_BE=""
 #
 # TODO refactor so the values are passed in by variables or a calling framework
 #
+# TODO Alternative refactor is to not have individual variables for all of these 
+# but to have a list of command line arguments that could be commented in/out.
+#
 ###################################################################################
 
 # The Controller, TransactionInjector, and Backend (aka System Under Test; SUT) are configured to meet the minimum 
 # hardware requirements suggested by SPECjbb 
 # (see the SPECjbb 2015 user guide, section 2.3 'Minimum hardware requirements', for more details)
-#
-# This implies that a machine should have at least 8GB of memory and 8 CPU cores to run this test
-export JAVA_OPTS_C="-Xms2g -Xmx2g -Xmn1536m -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:CICompilerCount=4"
+
+export C_XMS=2g
+export C_XMX=2g
+export C_XMN=1536m
+export C_PARALLEL_GC_THREADS=2
+export C_CI_COMPILER_COUNT=4
+
+# Controller and TI share the same configuration
+export JAVA_OPTS_C="-Xms$C_XMS -Xmx$C_XMX -Xmn$C_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$C_PARALLEL_GC_THREADS -XX:CICompilerCount=$C_CI_COMPILER_COUNT"
 export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 
-# Default configuration for BE
-# export JAVA_OPTS_BE="-Xms4g -Xmx4g -Xmn3g -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:-UseAdaptiveSizePolicy" # Default configuration
+# Backend has a different configuration
+export BE_XMS=4g
+export BE_XMX=4g
+export BE_XMN=3g
+export BE_PARALLEL_GC_THREADS=4
 
-# Configuration for a Maxed out (from a scaling perspective) Standard_D64s_v5 run as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
-export JAVA_OPTS_BE="-Xms192g -Xmx192g -Xmn173g -XX:+UseParallelGC -XX:ParallelGCThreads=64 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+# Default Configuration e.g., Written out in full: export JAVA_OPTS_BE="-Xms4g -Xmx4g -Xmn3g -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:-UseAdaptiveSizePolicy" 
+export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 
 ###################################################################################
 # Extra Controller Configuration
