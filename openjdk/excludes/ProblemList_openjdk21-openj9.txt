@@ -113,7 +113,6 @@ java/lang/System/LoggerFinder/modules/UnnamedLoggerForImageTest.java https://git
 java/lang/Thread/SleepSanity.java https://github.com/eclipse-openj9/openj9/issues/17638 windows-all
 java/lang/Thread/UncaughtExceptions.sh https://github.com/eclipse-openj9/openj9/issues/6690 generic-all
 java/lang/Thread/UncaughtExceptionsTest.java https://github.com/eclipse-openj9/openj9/issues/11930 generic-all
-java/lang/Thread/virtual/PreviewFeaturesNotEnabled.java https://github.com/eclipse-openj9/openj9/issues/16044 generic-all
 java/lang/Thread/virtual/StackTraces.java https://github.com/eclipse-openj9/openj9/issues/16045 generic-all
 java/lang/Thread/virtual/stress/TimedGet.java https://github.com/eclipse-openj9/openj9/issues/15184 macosx-x64
 java/lang/Thread/virtual/TracePinnedThreads.java https://github.com/eclipse-openj9/openj9/issues/15996 generic-all
@@ -547,13 +546,8 @@ serviceability/jvmti/thread/GetFrameCount/framecnt01/framecnt01.java https://git
 serviceability/jvmti/thread/GetStackTrace/getstacktr03/getstacktr03.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 serviceability/jvmti/thread/GetStackTrace/getstacktr05/getstacktr05.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 serviceability/jvmti/vthread/VThreadNotifyFramePopTest/VThreadNotifyFramePopTest.java https://github.com/adoptium/aqa-tests/issues/1297 aix-all
-serviceability/jvmti/GetLocalVariable/GetSetLocalUnsuspended.java https://github.com/eclipse-openj9/openj9/issues/17711 generic-all
 serviceability/jvmti/vthread/FollowReferences/VThreadStackRefTest.java#no-vmcontinuations https://github.com/eclipse-openj9/openj9/issues/17712 generic-all
 serviceability/jvmti/vthread/ForceEarlyReturnTest/ForceEarlyReturnTest.java#no-vmcontinuations https://github.com/eclipse-openj9/openj9/issues/17713 generic-all
-serviceability/jvmti/vthread/PopFrameTest/PopFrameTest.java#no-vmcontinuations https://github.com/eclipse-openj9/openj9/issues/17715 generic-all
-serviceability/jvmti/vthread/PopFrameTest/PopFrameTest.java#platform https://github.com/eclipse-openj9/openj9/issues/17716 generic-all
-serviceability/jvmti/vthread/StopThreadTest/StopThreadTest.java#no-vmcontinuations https://github.com/eclipse-openj9/openj9/issues/17717 generic-all
-serviceability/jvmti/vthread/StopThreadTest/StopThreadTest.java#platform https://github.com/eclipse-openj9/openj9/issues/17718 generic-all
 
 # jdk_container
 jdk/internal/platform/docker/TestDockerCpuMetrics.java https://github.com/eclipse-openj9/openj9/issues/16462 generic-all
