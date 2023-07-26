@@ -33,7 +33,7 @@
 			</then>
 			<else>
 				<echo message="Cloning TechEmpower Framework Benchmarks"/>
-				<var name="git_command" value="clone --depth 1 -b java-updates https://github.com/calderast/FrameworkBenchmarks.git"/>
+				<var name="git_command" value="clone --depth 1 -b master https://github.com/TechEmpower/FrameworkBenchmarks.git"/>
 				<echo message="git ${git_command}" />
 				<exec executable="git" failonerror="false" dir=".">
 					<arg line="${git_command}" />
