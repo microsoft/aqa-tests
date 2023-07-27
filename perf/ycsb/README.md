@@ -37,3 +37,7 @@ azurecosmos.primaryKey=< key string >
 * Obtained from the portal. The primary key is used to allow both read & write operations. If you are doing read-only workloads you can substitute the readonly key from the portal.
 
 The other optional parameters and their default values are defined in the template configuration file azurecosmos-template.properties.
+
+## Passing properties on the command line
+
+Additional YCSB properties can also be set on the command line instead of using the azurecosmos.properties file. Properties set on the command line can also be used to override properties in the file. These can be passed through the `EXTRA_YCSB_PROPERTIES` environment variable. For example, this variable could contain `-p useUpsert=true -p operationcount=10000`. 
