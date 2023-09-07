@@ -48,17 +48,17 @@ export TI_JVM_COUNT=1
 # run as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
 ###################################################################################
 #export TIER1=128                # number of cores x 2
-#export TIER2=14                 # We hardcode this to 14 as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
-#export TIER3=24                 # We hardcode this to 24 as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
-#export THREADS_SATURATION=96    # We hardcode this to 96 as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
-#export SELECTOR_RUNNER_COUNT=10 # We hardcode this to 10 as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
+#export TIER2=14                 # We hardcode this to 14 for Ampere Altra as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
+#export TIER3=24                 # We hardcode this to 24 for Ampere Altra as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide. Not always required to be set
+#export THREADS_SATURATION=96    # We hardcode this to 96 for Ampere Altra as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide. Not always required to be set
+#export SELECTOR_RUNNER_COUNT=10 # We hardcode this to 10 for Ampere Altra as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
 
 # export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=$TIER1 -Dspecjbb.forkjoin.workers.Tier2=$TIER2 -Dspecjbb.forkjoin.workers.Tier3=$TIER3 -Dspecjbb.customerDriver.threads.saturate=$THREADS_SATURATION -Dspecjbb.comm.connect.selector.runner.count=$SELECTOR_RUNNER_COUNT"
 # 2, 4, 8, 16 Groups
-export SPECJBB_OPTS_C="-Dspecjbb.group.count=2 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=112 -Dspecjbb.forkjoin.workers.Tier2=14 -Dspecjbb.forkjoin.workers.Tier3=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
-#export SPECJBB_OPTS_C="-Dspecjbb.group.count=4 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=56 -Dspecjbb.forkjoin.workers.Tier2=14 -Dspecjbb.forkjoin.workers.Tier3=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
-#export SPECJBB_OPTS_C="-Dspecjbb.group.count=8 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=28 -Dspecjbb.forkjoin.workers.Tier2=14 -Dspecjbb.forkjoin.workers.Tier3=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
-#export SPECJBB_OPTS_C="-Dspecjbb.group.count=16 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=14 -Dspecjbb.forkjoin.workers.Tier2=14 -Dspecjbb.forkjoin.workers.Tier3=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+export SPECJBB_OPTS_C="-Dspecjbb.group.count=2 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=112 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=4 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=56 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=8 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=28 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=16 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=14 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
 #export SPECJBB_OPTS_TI=""
 export SPECJBB_OPTS_BE=""
 
@@ -99,6 +99,7 @@ export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 # Default Configuration e.g., Written out in full: export JAVA_OPTS_BE="-Xms4g -Xmx4g -Xmn3g -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:-UseAdaptiveSizePolicy" 
 #export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 # 2, 4, 8, 16 Groups
+# 384GB -4G (Controller) -8G (Tx Injectors) -4G (OS) = 368G (Backends) --> 368G / 2 = 184G (per backend)
 export JAVA_OPTS_BE="-Xms184G -Xmx184G -Xmn165G -XX:+UseParallelGC -XX:ParallelGCThreads=52 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 #export JAVA_OPTS_BE="-Xms92G -Xmx92G -Xmn82G -XX:+UseParallelGC -XX:ParallelGCThreads=25 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 #export JAVA_OPTS_BE="-Xms46G -Xmx46G -Xmn41G -XX:+UseParallelGC -XX:ParallelGCThreads=12 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"

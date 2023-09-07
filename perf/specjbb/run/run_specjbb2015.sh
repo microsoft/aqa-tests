@@ -159,7 +159,7 @@ function runSpecJbbMulti() {
     # By default we take 1 CPU away for O/S operations and 1 CPU away for the Controller
     # and split up the rest (bash shell script rounds down)
     # Manually override the number of CPUs per group if you want set that manually
-    CPUS_PER_GROUP=$(TOTAL_CPU_COUNT-2)/$GROUP_COUNT
+    #CPUS_PER_GROUP=$(TOTAL_CPU_COUNT-2)/$GROUP_COUNT
 
     # By default we take 1 CPU away for O/S operations and 2 CPU away for the Controller
     #CPUS_PER_GROUP=$(TOTAL_CPU_COUNT-3)/$GROUP_COUNT
@@ -335,7 +335,7 @@ function runSpecJbbComposite() {
 }
 
 # NOTE: If the system does not have NUMA, then comment this out if you wish
-#checkNumaReadiness
+checkNumaReadiness
 
 if [ "$MODE" == "multi-jvm" ]; then
     echo "Running in MultiJVM mode"
