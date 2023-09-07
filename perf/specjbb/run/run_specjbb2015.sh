@@ -113,7 +113,7 @@ function runSpecJbbMulti() {
     timestamp=$(date +%Y%m%d_%H%M%S)
 
     # Some O/S setup before each run, see "../../../perf/benchmark_setup.sh"
-    beforeEachRun
+    #beforeEachRun
 
     # Create temp result directory                
     local result
@@ -153,13 +153,30 @@ function runSpecJbbMulti() {
     getTotalCPUs
     # Manually override the total CPU count if you do not want to use all detected cores
     #TOTAL_CPU_COUNT=
+    TOTAL_CPU_COUNT=112
     
     # Calculate the total number of CPUs available for each group
     # By default we take 1 CPU away for O/S operations and 1 CPU away for the Controller
     # and split up the rest (bash shell script rounds down)
     # Manually override the number of CPUs per group if you want set that manually
     CPUS_PER_GROUP=$(TOTAL_CPU_COUNT-2)/$GROUP_COUNT
-    #CPUS_PER_GROUP=
+
+    # By default we take 1 CPU away for O/S operations and 2 CPU away for the Controller
+    #CPUS_PER_GROUP=$(TOTAL_CPU_COUNT-3)/$GROUP_COUNT
+    
+    # Manually override the number of CPUs per group if you want set that manually
+
+    # 2 Groups scenario 54*2=108
+    # 52 CPUs for the BE and 2 CPUs for the TI for each group
+    CPUS_PER_GROUP=54
+    
+    # 4 Groups scenario 27*4=108
+    # 25 CPUS for each BE and 2 for each TI
+    #CPUS_PER_GROUP=27
+    
+    # 8 Groups scenario 13*8=104 - we should give more to the controller at this point
+    # 11 CPUS for each BE and 2 for each TI
+    #CPUS_PER_GROUP=13
 
     # Start the TransactionInjector JVMs and the Backend JVM for each group, the Controller 
     # will eventually connect and the benchmark will start
@@ -187,6 +204,8 @@ function runSpecJbbMulti() {
           # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
           # shellcheck disable=SC2086
           local transactionInjectorCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
+          # NOTE: If you are not running in NUMA mode then remove the prefix of numactl --physcpubind=$cpuRange --localalloc
+          #local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
           echo "$transactionInjectorCommand"
           eval "${transactionInjectorCommand}"
           echo -e "\t${transactionInjectorName} PID = $!"
@@ -206,6 +225,8 @@ function runSpecJbbMulti() {
       # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
       # shellcheck disable=SC2086
       local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
+      # NOTE: If you are not running in NUMA mode then remove the numactl --physcpubind=$cpuRange --localalloc prefix
+      #local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
       echo "$backendCommand"
       eval "${backendCommand}"
       echo -e "\t$BE_NAME PID = $!"
@@ -289,6 +310,8 @@ function runSpecJbbComposite() {
     # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
     # shellcheck disable=SC2086
     local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_C} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m COMPOSITE ${MODE_ARGS_BE} 2>&1 | tee composite.out &"
+    # NOTE: If you are not running in NUMA mode then remove the numactl --physcpubind=$cpuRange --localalloc prefix
+    #local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_C} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m COMPOSITE ${MODE_ARGS_BE} 2>&1 | tee composite.out &"
     echo "$backendCommand"
     eval "${backendCommand}"
     local compositePid=$!
@@ -311,7 +334,8 @@ function runSpecJbbComposite() {
   done
 }
 
-checkNumaReadiness
+# NOTE: If the system does not have NUMA, then comment this out if you wish
+#checkNumaReadiness
 
 if [ "$MODE" == "multi-jvm" ]; then
     echo "Running in MultiJVM mode"
@@ -323,10 +347,10 @@ elif [ "$MODE" == "composite" ]; then
     . "./options/specjbb-composite-config.sh"
     showConfig
     runSpecJbbComposite
-elif [ "$MODE" == "distributed" ]; then
-    echo "Running in Distributed mode"
-    showConfig
-    runSpecJbbDistributed
+#elif [ "$MODE" == "distributed" ]; then
+#    echo "Running in Distributed mode"
+#    showConfig
+#    runSpecJbbDistributed
 fi
 
 # exit gracefully once we are done

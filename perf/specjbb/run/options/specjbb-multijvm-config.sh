@@ -26,12 +26,16 @@
 # e.g., 1 Controller is used to control X groups, of which each group consists of 
 #       Y TransactionInjectors and 1 Backend
 #
-# When running on NUMA hardware, a Group should be mapped to a NUMA node.
+# When running on NUMA, a Group should be sized/mapped to a NUMA node.
+#
+# This section configures the looping of a SPECjbb run in multi-jvm mode
+# e.g., 1 group consisting of 1 TransactionInjector and 1 Backend
+# e.g., 2 groups consisting of 1 TransactionInjector and 1 Backend each
 #
 ###################################################################################
-export GROUP_COUNT=1
-export TI_JVM_COUNT=1 
 export NUM_OF_RUNS=1
+export GROUP_COUNT=2
+export TI_JVM_COUNT=1
 
 ###################################################################################
 # SPECjbb config
@@ -43,14 +47,19 @@ export NUM_OF_RUNS=1
 # e.g., Configuration for a Maxed out (from a scaling perspective) Standard_D64s_v5 
 # run as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
 ###################################################################################
-export TIER1=128
-export TIER2=14
-export TIER3=24
-export THREADS_SATURATION=96
-export SELECTOR_RUNNER_COUNT=10
+#export TIER1=128                # number of cores x 2
+#export TIER2=14                 # We hardcode this to 14 as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
+#export TIER3=24                 # We hardcode this to 24 as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
+#export THREADS_SATURATION=96    # We hardcode this to 96 as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
+#export SELECTOR_RUNNER_COUNT=10 # We hardcode this to 10 as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
 
-export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=$TIER1 -Dspecjbb.forkjoin.workers.Tier2=$TIER2 -Dspecjbb.forkjoin.workers.Tier3=$TIER3 -Dspecjbb.customerDriver.threads.saturate=$THREADS_SATURATION -Dspecjbb.comm.connect.selector.runner.count=$SELECTOR_RUNNER_COUNT"
-export SPECJBB_OPTS_TI=""
+# export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=$TIER1 -Dspecjbb.forkjoin.workers.Tier2=$TIER2 -Dspecjbb.forkjoin.workers.Tier3=$TIER3 -Dspecjbb.customerDriver.threads.saturate=$THREADS_SATURATION -Dspecjbb.comm.connect.selector.runner.count=$SELECTOR_RUNNER_COUNT"
+# 2, 4, 8, 16 Groups
+export SPECJBB_OPTS_C="-Dspecjbb.group.count=2 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=112 -Dspecjbb.forkjoin.workers.Tier2=14 -Dspecjbb.forkjoin.workers.Tier3=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=4 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=56 -Dspecjbb.forkjoin.workers.Tier2=14 -Dspecjbb.forkjoin.workers.Tier3=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=8 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=28 -Dspecjbb.forkjoin.workers.Tier2=14 -Dspecjbb.forkjoin.workers.Tier3=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=16 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=14 -Dspecjbb.forkjoin.workers.Tier2=14 -Dspecjbb.forkjoin.workers.Tier3=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+#export SPECJBB_OPTS_TI=""
 export SPECJBB_OPTS_BE=""
 
 ###################################################################################
@@ -75,20 +84,26 @@ export C_XMS=2g
 export C_XMX=2g
 export C_XMN=1536m
 export C_PARALLEL_GC_THREADS=2
-export C_CI_COMPILER_COUNT=4
+export C_CI_COMPILER_COUNT=2
 
 # Controller and TI share the same configuration
 export JAVA_OPTS_C="-Xms$C_XMS -Xmx$C_XMX -Xmn$C_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$C_PARALLEL_GC_THREADS -XX:CICompilerCount=$C_CI_COMPILER_COUNT"
 export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 
 # Backend has a different configuration
-export BE_XMS=4g
-export BE_XMX=4g
-export BE_XMN=3g
-export BE_PARALLEL_GC_THREADS=4
+#export BE_XMS=4g
+#export BE_XMX=4g
+#export BE_XMN=3g
+#export BE_PARALLEL_GC_THREADS=4   # 52
 
 # Default Configuration e.g., Written out in full: export JAVA_OPTS_BE="-Xms4g -Xmx4g -Xmn3g -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:-UseAdaptiveSizePolicy" 
-export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+# 2, 4, 8, 16 Groups
+export JAVA_OPTS_BE="-Xms184G -Xmx184G -Xmn165G -XX:+UseParallelGC -XX:ParallelGCThreads=52 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms92G -Xmx92G -Xmn82G -XX:+UseParallelGC -XX:ParallelGCThreads=25 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms46G -Xmx46G -Xmn41G -XX:+UseParallelGC -XX:ParallelGCThreads=12 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms23G -Xmx23G -Xmn20G -XX:+UseParallelGC -XX:ParallelGCThreads=6 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms12G -Xmx12G -Xmn10G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 
 ###################################################################################
 # Extra Controller Configuration
