@@ -23,18 +23,21 @@
 ###################################################################################
 
 # Set your Java executable here
-# e.g, JAVA=/usr/lib/jvm/java-17-openjdk-arm64/bin/java
+# e.g., JAVA=/usr/lib/jvm/java-17-openjdk-arm64/bin/java
+# e.g., JAVA=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/bin/java
 JAVA=
 
 # Set the location of this project
-# e.g. export SPECJBB_BASEDIR=/home/username/workspace/microsoft/aqa-tests/perf/specjbb
+# e.g., export SPECJBB_BASEDIR=/home/username/workspace/microsoft/aqa-tests/perf/specjbb
+# e.g., export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
 # RUN_SCRIPTS_DIR & RUN_OPTIONS_DIR should not need altering
 export SPECJBB_BASEDIR=
 RUN_SCRIPTS_DIR=$SPECJBB_BASEDIR/run
 RUN_OPTIONS_DIR=$SPECJBB_BASEDIR/run/options
 
 # Set the location of the extracted SPECjbb folder
-# e.g. export SPECJBB_SRC=/home/username/workspace/microsoft/workspace/SPECjbb2015-1.03
+# e.g., export SPECJBB_SRC=/home/username/workspace/microsoft/workspace/SPECjbb2015-1.03
+# e.g., export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
 # SPECJBB_JAR & SPECJBB_CONFIG should not need altering
 export SPECJBB_SRC=
 SPECJBB_JAR=$SPECJBB_SRC/specjbb2015.jar
@@ -166,18 +169,10 @@ function runSpecJbbMulti() {
     
     # Manually override the number of CPUs per group if you want set that manually
 
-    # 2 Groups scenario 54*2=108
-    # 52 CPUs for the BE and 2 CPUs for the TI for each group
-    CPUS_PER_GROUP=54
+    # 2 Groups scenario 56*2=112
+    # 54 CPUs for the BE (pinned to a a NUMA node) and 2 CPUs for the TI and Controller to share
+    CPUS_PER_GROUP=56
     
-    # 4 Groups scenario 27*4=108
-    # 25 CPUS for each BE and 2 for each TI
-    #CPUS_PER_GROUP=27
-    
-    # 8 Groups scenario 13*8=104 - we should give more to the controller at this point
-    # 11 CPUS for each BE and 2 for each TI
-    #CPUS_PER_GROUP=13
-
     # Start the TransactionInjector JVMs and the Backend JVM for each group, the Controller 
     # will eventually connect and the benchmark will start
     for ((groupNumber=1; groupNumber<GROUP_COUNT+1; groupNumber=groupNumber+1)); do
@@ -186,13 +181,14 @@ function runSpecJbbMulti() {
 
       echo -e "\nStarting Transaction Injector JVMs for group $groupId:"
 
-      # Calculate CPUs available via NUMA for this run. We use some math to create a CPU range string
-      # TOTAL_CPU_COUNT comes from ../../benchmark_setup.sh
-      # e.g., For 64 cores per group and 2 groups                 # Group 1                 Group 2
-      local cpuInit=$((cpuCount*CPUS_PER_GROUP))                  # e.g., 0 * 64 = 0        1 * 64 = 64
-      local cpuMax=$(($(($((cpuCount+1))*CPUS_PER_GROUP))-1))     # e.g., 1 * 64 - 1 = 63   2 * 64 - 1 = 127
-      local cpuRange="${cpuInit}-${cpuMax}"                       # e.g., 0-63              64-127
-      echo "cpuRange is: $cpuRange"
+      # We use some math to create a CPU range string to suit a 1TI to 1BE ratio
+      # TOTAL_CPU_COUNT comes from ../../benchmark_setup.sh or is hard coded above
+      local cpuInit=$((cpuCount*CPUS_PER_GROUP))                  # e.g., 0 * 56 = 0        1 * 56 = 56
+      local becpuInit=$((cpuInit+1))                              # e.g., 0 + 1 = 1         56 + 1 = 57
+      local cpuMax=$(($(($((cpuCount+1))*CPUS_PER_GROUP))-1))     # e.g., 1 * 56 - 1 = 55   2 * 56 - 1 = 111
+      local becpuMax=$((cpuMax-1))                                # e.g., 55 - 1 = 54       111 - 1 = 110
+      local cpuRange="${becpuInit}-${becpuMax}"                   # e.g., 1-54              57-110
+      echo "cpuRange used for BE is: $cpuRange"
 
       for ((injectorNumber=1; injectorNumber<TI_JVM_COUNT+1; injectorNumber=injectorNumber+1)); do
 
@@ -200,12 +196,11 @@ function runSpecJbbMulti() {
           local transactionInjectorName="$groupId.TxInjector.$transactionInjectorJvmId"
 
           echo "Start $transactionInjectorName"
-          
+
+          # NOTE: We are deliberately not running TI's bound to a particular range, so we remove the prefix of numactl --physcpubind=$cpuRange --localalloc          
           # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
           # shellcheck disable=SC2086
-          local transactionInjectorCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
-          # NOTE: If you are not running in NUMA mode then remove the prefix of numactl --physcpubind=$cpuRange --localalloc
-          #local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
+          local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
           echo "$transactionInjectorCommand"
           eval "${transactionInjectorCommand}"
           echo -e "\t${transactionInjectorName} PID = $!"
@@ -236,7 +231,7 @@ function runSpecJbbMulti() {
       sleep 1
 
       # Increment the CPU count so that we use a new range for the next run
-      cpucount=$((cpucount+1))
+      cpuCount=$((cpuCount+1))
     done
 
     echo
