@@ -153,9 +153,6 @@ function runSpecJbbMulti() {
 
     #########################################################
 
-    # Index variable used to help calculate the cpuRange if we have multiple groups and NUMA enabled
-    local cpuCount=0
-
     # Get the cpu count, see "../../../perf/benchmark_setup.sh", results lives in TOTAL_CPU_COUNT
     getTotalCPUs
     # Manually override the total CPU count if you do not want to use all detected cores
@@ -177,7 +174,7 @@ function runSpecJbbMulti() {
     #CPUS_PER_BACKEND=12
     #CPUS_PER_BACKEND=5
 
-    CPUS_FOR_NON_BE=$((CPUS_PER_GROUP-CPUS_PER_BACKEND))
+    CPUS_FOR_NON_BE=$((CPUS_PER_NODE-$((CPUS_PER_BACKEND*GROUPS_PER_NODE_COUNT))))
     OFFSET=$((CPUS_FOR_NON_BE/2))
 
     echo "TOTAL_CPU_COUNT is: $TOTAL_CPU_COUNT"
@@ -187,35 +184,53 @@ function runSpecJbbMulti() {
     echo "CPUS_FOR_NON_BE is: $CPUS_FOR_NON_BE"
     echo "OFFSET is: $OFFSET"
 
-    # We're going to align the groups within NUMA NODES (if no NUMA nodes are enabled then this defaults to 1)
-    for ((nodeNumber=1; nodeNumber<NODE_COUNT+1; nodeNumber=nodeNumber+1)) ; do
+    # We execute groups within the boundary of NUMA node (if no NUMA nodes are enabled then NODE_COUNT should == 1)
+    for ((nodeNumber=0; nodeNumber<NODE_COUNT; nodeNumber=nodeNumber+1)) ; do
 
       echo -e "\nStarting Groups for NUMA Node $nodeNumber"
 
+      # We use some complicated arithmetic to create a CPU ranges               NODE 0                      NODE 1
+      local cpuInit=$((CPUS_PER_NODE*nodeNumber))                               # 56 * 0 = 0                56 * 1 = 56
+
       # Start the TransactionInjector JVMs and the Backend JVM for each group, the Controller 
       # will eventually connect and the benchmark will start
-      for ((groupNumber=1; groupNumber<GROUPS_PER_NODE_COUNT+1; groupNumber=groupNumber+1)); do
+      for ((groupNumber=0; groupNumber<GROUPS_PER_NODE_COUNT; groupNumber=groupNumber+1)); do
 
         local groupId="Node${nodeNumber}Group${groupNumber}"
         echo -e "\nStarting Transaction Injector JVM(s) for node/group $groupId:"
 
-        # We use some math to create a CPU range string to suit a 1TI to 1BE ratio
-        # TOTAL_CPU_COUNT comes from ../../benchmark_setup.sh or is hard coded above
-                                                                    # NODE 1 GROUP 1    NODE 2 GROUP 1
-        local cpuInit=$((cpuCount*CPUS_PER_NODE))                   # 0 * 54 = 0        1 * 56 = 56
-        local becpuInit=$((cpuInit+OFFSET))                         # 0 + 1 = 1         56 + 1 = 57
-        local cpuMax=$(($(($((cpuCount+1))*CPUS_PER_NODE))-1))      # 1 * 56 - 1 = 55   2 * 56 - 1 = 111
-        local becpuMax=$((cpuMax-1))                                # 55 - 1 = 54       111 - 1 = 110
-        local cpuRange="${becpuInit}-${becpuMax}"                   # 1-54              57-110
+        local becpuInit=0
+        local becpuMax=0
+        local cpuMax=0
+        # We use some complicated arithmetic to create a CPU ranges             NODE 0 GROUP 0              NODE 1 GROUP 0
+        if [ $groupNumber == 0 ] ; then
+          cpuInit=$((cpuInit))                                                  # 0                         56         
+          becpuInit=$((cpuInit+OFFSET))                                         # 0 + 1 = 1                 56 + 1 = 57
+          cpuMax=$(($((cpuInit+CPUS_PER_GROUP))-1))                             # 0 + 56 - 1 = 55           56 + 56 - 1 = 111
+          if [ $GROUPS_PER_NODE_COUNT == 1 ] ; then
+            becpuMax=$((cpuMax-OFFSET))                                         # 55 - 1 = 54               111 - 1 = 110
+          else
+            becpuMax=$((cpuMax))                                                
+          fi
+        else
+          cpuInit=$((cpuInit+CPUS_PER_GROUP))
+          becpuInit=$((cpuInit))                                    
+          cpuMax=$(($((cpuInit+CPUS_PER_GROUP))-1))                             
+          becpuMax=$((cpuMax-OFFSET))                                                   
+        fi
+        
+        local cpuRange="${becpuInit}-${becpuMax}"                               # 1-54                      57-110
         echo "cpuRange to be used for BE is: $cpuRange"
 
-        # Node Number 1 * CPUs in Node (56) = 56
-                                                                     # NODE 1 GROUP 1    NODE 1 GROUP 2      NODE 2 GROUP 1     NODE 2 GROUP 2
-        #local cpuInit=$((cpuCount*CPUS_PER_NODE))                   # 0 * 28 = 0        1 * 28 = 28         2 * 28 = 56        3 * 28 = 84
-        #local becpuInit=$((cpuInit+offset))                         # 0 + 2 = 2         28 + 2 = 30         56 + 2 = 58        84 + 2 = 86
-        #local cpuMax=$(($(($((cpuCount+1))*CPUS_PER_NODE))))        # 1 * 28 = 28       2 * 28 = 56         3 * 28 = 84        4 * 28 = 112
-        #local becpuMax=$((cpuMax-1))                                # 28 - 1 = 27       56 - 1 = 55         84 - 1 = 83        112 - 1 = 111
-        #local cpuRange="${becpuInit}-${becpuMax}"                   # 2-27              30-55               58-83              86-111
+                                                                                  # NODE 0 GROUP 0          NODE 0 GROUP 1          NODE 1 GROUP 0     NODE 1 GROUP 1
+        #cpuInit=$((cpuInit))                                                     # 0                                               56
+        #cpuInit=$((cpuInit+CPUS_PER_GROUP))                                      #                         28 + 28 = 56                               56 + 28 = 84
+        #becpuInit=$((cpuInit+OFFSET))                                            # 0 + 2 = 2                                       56 + 2 = 58        
+        #becpuInit=$((cpuInit))                                                   #                         28                                         84
+        #cpuMax=$(($((cpuInit+CPUS_PER_GROUP))-1))                                # 0 + 28 - 1 = 27         28 + 28 - 1 = 55        56 + 28 -1 = 83    84 + 28 -1 = 111
+        #becpuMax=$((cpuMax))                                                     # 27                                              83        
+        #becpuMax=$((cpuMax-OFFSET))                                              #                         55 - 2 = 53                                111 - 2 = 109
+        #cpuRange="${becpuInit}-${becpuMax}"                                      # 2-27                    28-53                   58-83              84-109
         #echo "cpuRange used for BE is: $cpuRange"
 
         for ((injectorNumber=1; injectorNumber<TI_JVM_COUNT+1; injectorNumber=injectorNumber+1)); do
@@ -257,9 +272,6 @@ function runSpecJbbMulti() {
         # Sleep for 1 second to allow each backend JVM to start.
         # TODO this seems arbitrary, we should detect the actual start of the BE
         sleep 1
-
-        # Increment the CPU count so that we use a new range for the next run
-        cpuCount=$((cpuCount+1))
       done
     done
 

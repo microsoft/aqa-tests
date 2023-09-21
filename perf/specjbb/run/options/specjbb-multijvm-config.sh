@@ -102,7 +102,7 @@ export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 #export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 # 2, 4, 8, 16 Groups
 # 384GB -4G (Controller) -8G (Tx Injectors) -4G (OS) = 368G (Backends) --> 368G / 2 = 184G (per backend)
-export JAVA_OPTS_BE="-Xms184G -Xmx184G -Xmn165G -XX:+UseParallelGC -XX:ParallelGCThreads=52 -XX:+AlwaysPreTouch -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+export JAVA_OPTS_BE="-Xms256M -Xmx256M -Xmn188M -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AlwaysPreTouch -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 #export JAVA_OPTS_BE="-Xms184G -Xmx184G -Xmn165G -XX:+UseParallelGC -XX:ParallelGCThreads=52 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 
 #export JAVA_OPTS_BE="-Xms92G -Xmx92G -Xmn82G -XX:+UseParallelGC -XX:ParallelGCThreads=25 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
