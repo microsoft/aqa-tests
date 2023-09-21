@@ -35,7 +35,7 @@
 ###################################################################################
 export NUM_OF_RUNS=1
 export NODE_COUNT=2                                         # Set to 1 if not running on NUMA
-export GROUP_COUNT=2                                        # Number of groups
+export GROUP_COUNT=4                                        # Number of groups
 export GROUPS_PER_NODE_COUNT=$((GROUP_COUNT/NODE_COUNT))    # Number of groups PER NUMA node
 export TI_JVM_COUNT=1                                       # Number of TI's per group
 
@@ -57,7 +57,9 @@ export TI_JVM_COUNT=1                                       # Number of TI's per
 
 # export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=$TIER1 -Dspecjbb.forkjoin.workers.Tier2=$TIER2 -Dspecjbb.forkjoin.workers.Tier3=$TIER3 -Dspecjbb.customerDriver.threads.saturate=$THREADS_SATURATION -Dspecjbb.comm.connect.selector.runner.count=$SELECTOR_RUNNER_COUNT"
 # 2, 4, 8, 16 Groups
-export SPECJBB_OPTS_C="-Dspecjbb.group.count=2 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=112 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=112 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=2 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=112 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
 #export SPECJBB_OPTS_C="-Dspecjbb.group.count=4 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=56 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
 #export SPECJBB_OPTS_C="-Dspecjbb.group.count=8 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=28 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
 #export SPECJBB_OPTS_C="-Dspecjbb.group.count=16 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=14 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"

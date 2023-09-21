@@ -169,8 +169,8 @@ function runSpecJbbMulti() {
     CPUS_PER_GROUP=$((CPUS_PER_NODE/GROUPS_PER_NODE_COUNT))      # e.g, 28
     
     # Hardcoded value depending on how you want to do scaling runs    
-    CPUS_PER_BACKEND=54
-    #CPUS_PER_BACKEND=26
+    #CPUS_PER_BACKEND=54
+    CPUS_PER_BACKEND=26
     #CPUS_PER_BACKEND=12
     #CPUS_PER_BACKEND=5
 
