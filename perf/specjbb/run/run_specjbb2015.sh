@@ -24,22 +24,22 @@
 
 # Set your Java executable here
 # e.g., JAVA=/usr/lib/jvm/java-17-openjdk-arm64/bin/java
-# e.g., JAVA=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/bin/java
-JAVA=
+JAVA=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/bin/java
+#JAVA=
 
 # Set the location of this project
 # e.g., export SPECJBB_BASEDIR=/home/username/workspace/microsoft/aqa-tests/perf/specjbb
-# e.g., export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
+export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
 # RUN_SCRIPTS_DIR & RUN_OPTIONS_DIR should not need altering
-export SPECJBB_BASEDIR=
+#export SPECJBB_BASEDIR=
 RUN_SCRIPTS_DIR=$SPECJBB_BASEDIR/run
 RUN_OPTIONS_DIR=$SPECJBB_BASEDIR/run/options
 
 # Set the location of the extracted SPECjbb folder
 # e.g., export SPECJBB_SRC=/home/username/workspace/microsoft/workspace/SPECjbb2015-1.03
-# e.g., export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
+export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
 # SPECJBB_JAR & SPECJBB_CONFIG should not need altering
-export SPECJBB_SRC=
+#export SPECJBB_SRC=
 SPECJBB_JAR=$SPECJBB_SRC/specjbb2015.jar
 SPECJBB_CONFIG=$SPECJBB_SRC/config
 
@@ -81,7 +81,9 @@ function showConfig() {
   echo "Mode: ${MODE}"
   echo ""
   echo "Number of Runs: ${NUM_OF_RUNS}"
-  echo "Number of Groups: ${GROUP_COUNT}"
+  echo "Number of Nodes: ${NODE_COUNT}"
+  echo "Total Number of Groups: ${GROUP_COUNT}"
+  echo "Number of Groups Per Node: ${GROUPS_PER_NODE_COUNT}"
   echo "Number of Transaction Injectors: ${TI_JVM_COUNT}"
   echo "Controller Options: ${JAVA_OPTS_C}"
   echo "Transaction Injector Options: ${JAVA_OPTS_TI}"
@@ -149,6 +151,8 @@ function runSpecJbbMulti() {
     echo "Controller PID: $CTRL_PID"
     sleep 3
 
+    #########################################################
+
     # Index variable used to help calculate the cpuRange if we have multiple groups and NUMA enabled
     local cpuCount=0
 
@@ -158,80 +162,105 @@ function runSpecJbbMulti() {
     #TOTAL_CPU_COUNT=
     TOTAL_CPU_COUNT=112
     
-    # Calculate the total number of CPUs available for each group
-    # By default we take 1 CPU away for O/S operations and 1 CPU away for the Controller
-    # and split up the rest (bash shell script rounds down)
+    # Calculate the number of CPUs available for each NUMA node
+    # Manually override the CPUs per node count
+    #CPUS_PER_NODE=
+    CPUS_PER_NODE=$((TOTAL_CPU_COUNT/NODE_COUNT))                # e.g, 56
+
     # Manually override the number of CPUs per group if you want set that manually
-    #CPUS_PER_GROUP=$(TOTAL_CPU_COUNT-2)/$GROUP_COUNT
-
-    # By default we take 1 CPU away for O/S operations and 2 CPU away for the Controller
-    #CPUS_PER_GROUP=$(TOTAL_CPU_COUNT-3)/$GROUP_COUNT
+    #CPUS_PER_GROUP
+    CPUS_PER_GROUP=$((CPUS_PER_NODE/GROUPS_PER_NODE_COUNT))      # e.g, 28
     
-    # Manually override the number of CPUs per group if you want set that manually
+    # Hardcoded value depending on how you want to do scaling runs    
+    CPUS_PER_BACKEND=54
+    #CPUS_PER_BACKEND=26
+    #CPUS_PER_BACKEND=12
+    #CPUS_PER_BACKEND=5
 
-    # 2 Groups scenario 56*2=112
-    # 54 CPUs for the BE (pinned to a a NUMA node) and 2 CPUs for the TI and Controller to share
-    CPUS_PER_GROUP=56
-    
-    # Start the TransactionInjector JVMs and the Backend JVM for each group, the Controller 
-    # will eventually connect and the benchmark will start
-    for ((groupNumber=1; groupNumber<GROUP_COUNT+1; groupNumber=groupNumber+1)); do
+    CPUS_FOR_NON_BE=$((CPUS_PER_GROUP-CPUS_PER_BACKEND))
+    OFFSET=$((CPUS_FOR_NON_BE/2))
 
-      local groupId="Group$groupNumber"
+    echo "TOTAL_CPU_COUNT is: $TOTAL_CPU_COUNT"
+    echo "CPUS_PER_NODE is: $CPUS_PER_NODE"
+    echo "CPUS_PER_GROUP is: $CPUS_PER_GROUP"
+    echo "CPUS_PER_BACKEND is: $CPUS_PER_BACKEND"
+    echo "CPUS_FOR_NON_BE is: $CPUS_FOR_NON_BE"
+    echo "OFFSET is: $OFFSET"
 
-      echo -e "\nStarting Transaction Injector JVMs for group $groupId:"
+    # We're going to align the groups within NUMA NODES (if no NUMA nodes are enabled then this defaults to 1)
+    for ((nodeNumber=1; nodeNumber<NODE_COUNT+1; nodeNumber=nodeNumber+1)) ; do
 
-      # We use some math to create a CPU range string to suit a 1TI to 1BE ratio
-      # TOTAL_CPU_COUNT comes from ../../benchmark_setup.sh or is hard coded above
-      local cpuInit=$((cpuCount*CPUS_PER_GROUP))                  # e.g., 0 * 56 = 0        1 * 56 = 56
-      local becpuInit=$((cpuInit+1))                              # e.g., 0 + 1 = 1         56 + 1 = 57
-      local cpuMax=$(($(($((cpuCount+1))*CPUS_PER_GROUP))-1))     # e.g., 1 * 56 - 1 = 55   2 * 56 - 1 = 111
-      local becpuMax=$((cpuMax-1))                                # e.g., 55 - 1 = 54       111 - 1 = 110
-      local cpuRange="${becpuInit}-${becpuMax}"                   # e.g., 1-54              57-110
-      echo "cpuRange used for BE is: $cpuRange"
+      echo -e "\nStarting Groups for NUMA Node $nodeNumber"
 
-      for ((injectorNumber=1; injectorNumber<TI_JVM_COUNT+1; injectorNumber=injectorNumber+1)); do
+      # Start the TransactionInjector JVMs and the Backend JVM for each group, the Controller 
+      # will eventually connect and the benchmark will start
+      for ((groupNumber=1; groupNumber<GROUPS_PER_NODE_COUNT+1; groupNumber=groupNumber+1)); do
 
-          local transactionInjectorJvmId="txiJVM$injectorNumber"
-          local transactionInjectorName="$groupId.TxInjector.$transactionInjectorJvmId"
+        local groupId="Node${nodeNumber}Group${groupNumber}"
+        echo -e "\nStarting Transaction Injector JVM(s) for node/group $groupId:"
 
-          echo "Start $transactionInjectorName"
+        # We use some math to create a CPU range string to suit a 1TI to 1BE ratio
+        # TOTAL_CPU_COUNT comes from ../../benchmark_setup.sh or is hard coded above
+                                                                    # NODE 1 GROUP 1    NODE 2 GROUP 1
+        local cpuInit=$((cpuCount*CPUS_PER_NODE))                   # 0 * 54 = 0        1 * 56 = 56
+        local becpuInit=$((cpuInit+OFFSET))                         # 0 + 1 = 1         56 + 1 = 57
+        local cpuMax=$(($(($((cpuCount+1))*CPUS_PER_NODE))-1))      # 1 * 56 - 1 = 55   2 * 56 - 1 = 111
+        local becpuMax=$((cpuMax-1))                                # 55 - 1 = 54       111 - 1 = 110
+        local cpuRange="${becpuInit}-${becpuMax}"                   # 1-54              57-110
+        echo "cpuRange to be used for BE is: $cpuRange"
 
-          # NOTE: We are deliberately not running TI's bound to a particular range, so we remove the prefix of numactl --physcpubind=$cpuRange --localalloc          
-          # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
-          # shellcheck disable=SC2086
-          local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
-          echo "$transactionInjectorCommand"
-          eval "${transactionInjectorCommand}"
-          echo -e "\t${transactionInjectorName} PID = $!"
+        # Node Number 1 * CPUs in Node (56) = 56
+                                                                     # NODE 1 GROUP 1    NODE 1 GROUP 2      NODE 2 GROUP 1     NODE 2 GROUP 2
+        #local cpuInit=$((cpuCount*CPUS_PER_NODE))                   # 0 * 28 = 0        1 * 28 = 28         2 * 28 = 56        3 * 28 = 84
+        #local becpuInit=$((cpuInit+offset))                         # 0 + 2 = 2         28 + 2 = 30         56 + 2 = 58        84 + 2 = 86
+        #local cpuMax=$(($(($((cpuCount+1))*CPUS_PER_NODE))))        # 1 * 28 = 28       2 * 28 = 56         3 * 28 = 84        4 * 28 = 112
+        #local becpuMax=$((cpuMax-1))                                # 28 - 1 = 27       56 - 1 = 55         84 - 1 = 83        112 - 1 = 111
+        #local cpuRange="${becpuInit}-${becpuMax}"                   # 2-27              30-55               58-83              86-111
+        #echo "cpuRange used for BE is: $cpuRange"
 
-          # Sleep for 1 second to allow each transaction injector JVM to start.
-          # TODO this seems arbitrary, we should detect the actual start of the TI
-          sleep 1
+        for ((injectorNumber=1; injectorNumber<TI_JVM_COUNT+1; injectorNumber=injectorNumber+1)); do
+
+            local transactionInjectorJvmId="txiJVM${injectorNumber}"
+            local transactionInjectorName="$groupId.TxInjector.${transactionInjectorJvmId}"
+
+            echo "Start $transactionInjectorName"
+
+            # NOTE: We are deliberately not running TI's bound to a particular range, so we remove the prefix of numactl --physcpubind=$cpuRange --localalloc          
+            # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
+            # shellcheck disable=SC2086
+            local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
+            echo "$transactionInjectorCommand"
+            eval "${transactionInjectorCommand}"
+            echo -e "\t${transactionInjectorName} PID = $!"
+
+            # Sleep for 1 second to allow each transaction injector JVM to start.
+            # TODO this seems arbitrary, we should detect the actual start of the TI
+            sleep 1
+        done
+
+        local backendJvmId=beJVM
+        local backendName="$groupId.Backend.${backendJvmId}"
+        
+        # Add GC logging to the backend's JVM options. We use the recommended settings for GCToolkit (https://www.github.com/microsoft/gctoolkit).
+        JAVA_OPTS_BE_WITH_GC_LOG="$JAVA_OPTS_BE -Xlog:gc*,gc+ref=debug,gc+phases=debug,gc+age=trace,safepoint:file=${backendName}_gc.log"
+
+        echo "Start $backendName"
+        # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
+        # shellcheck disable=SC2086
+        #local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
+        # NOTE: If you are not running in NUMA mode then remove the numactl --physcpubind=$cpuRange --localalloc prefix
+        local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
+        echo "$backendCommand"
+        eval "${backendCommand}"
+        echo -e "\t$backendName PID = $!"
+
+        # Sleep for 1 second to allow each backend JVM to start.
+        # TODO this seems arbitrary, we should detect the actual start of the BE
+        sleep 1
+
+        # Increment the CPU count so that we use a new range for the next run
+        cpuCount=$((cpuCount+1))
       done
-
-      local backendJvmId=beJVM
-      local backendName="$groupId.Backend.${backendJvmId}"
-      
-      # Add GC logging to the backend's JVM options. We use the recommended settings for GCToolkit (https://www.github.com/microsoft/gctoolkit).
-      JAVA_OPTS_BE_WITH_GC_LOG="$JAVA_OPTS_BE -Xlog:gc*,gc+ref=debug,gc+phases=debug,gc+age=trace,safepoint:file=${backendName}_gc.log"
-
-      echo "Start $BE_NAME"
-      # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
-      # shellcheck disable=SC2086
-      local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
-      # NOTE: If you are not running in NUMA mode then remove the numactl --physcpubind=$cpuRange --localalloc prefix
-      #local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
-      echo "$backendCommand"
-      eval "${backendCommand}"
-      echo -e "\t$BE_NAME PID = $!"
-
-      # Sleep for 1 second to allow each backend JVM to start.
-      # TODO this seems arbitrary, we should detect the actual start of the BE
-      sleep 1
-
-      # Increment the CPU count so that we use a new range for the next run
-      cpuCount=$((cpuCount+1))
     done
 
     echo
@@ -314,7 +343,7 @@ function runSpecJbbComposite() {
     sleep 3
 
     # Increment the CPU count so that we use a new range for the next run
-    cpucount=$((cpucount+1))
+    cpuCount=$((cpuCount+1))
     
     echo
     echo "SPECjbb2015 is running..."
@@ -330,7 +359,7 @@ function runSpecJbbComposite() {
 }
 
 # NOTE: If the system does not have NUMA, then comment this out if you wish
-checkNumaReadiness
+#checkNumaReadiness
 
 if [ "$MODE" == "multi-jvm" ]; then
     echo "Running in MultiJVM mode"

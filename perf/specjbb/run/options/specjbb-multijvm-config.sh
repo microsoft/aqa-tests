@@ -26,7 +26,7 @@
 # e.g., 1 Controller is used to control X groups, of which each group consists of 
 #       Y TransactionInjectors and 1 Backend
 #
-# When running on NUMA, a Group should be sized/mapped to a NUMA node.
+# When running on NUMA, a Groups should be sized/mapped inside a NUMA node.
 #
 # This section configures the looping of a SPECjbb run in multi-jvm mode
 # e.g., 1 group consisting of 1 TransactionInjector and 1 Backend
@@ -34,8 +34,10 @@
 #
 ###################################################################################
 export NUM_OF_RUNS=1
-export GROUP_COUNT=2
-export TI_JVM_COUNT=1
+export NODE_COUNT=2                                         # Set to 1 if not running on NUMA
+export GROUP_COUNT=2                                        # Number of groups
+export GROUPS_PER_NODE_COUNT=$((GROUP_COUNT/NODE_COUNT))    # Number of groups PER NUMA node
+export TI_JVM_COUNT=1                                       # Number of TI's per group
 
 ###################################################################################
 # SPECjbb config
@@ -100,7 +102,9 @@ export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 #export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 # 2, 4, 8, 16 Groups
 # 384GB -4G (Controller) -8G (Tx Injectors) -4G (OS) = 368G (Backends) --> 368G / 2 = 184G (per backend)
-export JAVA_OPTS_BE="-Xms184G -Xmx184G -Xmn165G -XX:+UseParallelGC -XX:ParallelGCThreads=52 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+export JAVA_OPTS_BE="-Xms184G -Xmx184G -Xmn165G -XX:+UseParallelGC -XX:ParallelGCThreads=52 -XX:+AlwaysPreTouch -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms184G -Xmx184G -Xmn165G -XX:+UseParallelGC -XX:ParallelGCThreads=52 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+
 #export JAVA_OPTS_BE="-Xms92G -Xmx92G -Xmn82G -XX:+UseParallelGC -XX:ParallelGCThreads=25 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 #export JAVA_OPTS_BE="-Xms46G -Xmx46G -Xmn41G -XX:+UseParallelGC -XX:ParallelGCThreads=12 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 #export JAVA_OPTS_BE="-Xms23G -Xmx23G -Xmn20G -XX:+UseParallelGC -XX:ParallelGCThreads=6 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
