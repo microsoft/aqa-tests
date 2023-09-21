@@ -169,6 +169,7 @@ function runSpecJbbMulti() {
     CPUS_PER_GROUP=$((CPUS_PER_NODE/GROUPS_PER_NODE_COUNT))      # e.g, 28
     
     # Hardcoded value depending on how you want to do scaling runs    
+    # CPUS_PER_BACKEND=108  # Scale Run 0, e.g., pretend we are a composite run
     CPUS_PER_BACKEND=54     # Scale Run 1
     #CPUS_PER_BACKEND=26    # Scale Run 2
     #CPUS_PER_BACKEND=12    # Scale Run 3
@@ -189,7 +190,6 @@ function runSpecJbbMulti() {
 
       echo -e "\nStarting Groups for NUMA Node $nodeNumber"
 
-      # We use some complicated arithmetic to create a CPU ranges               NODE 0                      NODE 1
       local cpuInit=$((CPUS_PER_NODE*nodeNumber))                               # 56 * 0 = 0                56 * 1 = 56
 
       # Start the TransactionInjector JVMs and the Backend JVM for each group, the Controller 
@@ -220,7 +220,6 @@ function runSpecJbbMulti() {
         #becpuInit=$((cpuInit+OFFSET))                                          # 0 + 2 = 2           26 + 2 = 28         56 + 2 = 58         82 + 2 = 84
         #becpuMax=$((becpuInit+CPUS_PER_BACKEND-1))                             # 2 + 26 - 1 = 27     28 + 26 - 1 = 53    58 + 26 - 1 = 83    84 + 26 - 1 = 109
         #cpuRange="${becpuInit}-${becpuMax}"                                    # 2-27                28-53               58-83               84-109
-        #echo "cpuRange used for BE is: $cpuRange"        
 
                                                                                 # NODE 0 GROUP 0      NODE 0 GROUP 1      NODE 0 GROUP 2      NODE 0 GROUP 3      NODE 1 GROUP 0      NODE 1 GROUP 1      NODE 1 GROUP 2      NODE 1 GROUP 3
         #cpuInit=$((cpuInit))                                                   # 0                                                                               56
@@ -228,7 +227,6 @@ function runSpecJbbMulti() {
         #becpuInit=$((cpuInit+OFFSET))                                          # 0 + 4 = 4           12 + 4 = 16         24 + 4 = 28         36 + 4 = 40                             68 + 4 = 72         80 + 4 = 84         92 + 4 = 96
         #becpuMax=$((becpuInit+CPUS_PER_BACKEND-1))                             # 4 + 12 - 1 = 15     16 + 12 - 1 = 27    28 + 12 - 1 = 39    40 + 12 - 1 = 51    60 + 12 - 1 = 71    72 + 12 - 1 = 83    84 + 12 - 1 = 95    96 + 12 - 1 = 107    
         #cpuRange="${becpuInit}-${becpuMax}"                                    # 4-15                16-27               28-39               40-51               60-71               72-83               84-95               96-107
-        #echo "cpuRange used for BE is: $cpuRange"
 
         for ((injectorNumber=1; injectorNumber<TI_JVM_COUNT+1; injectorNumber=injectorNumber+1)); do
 
@@ -367,7 +365,7 @@ function runSpecJbbComposite() {
   done
 }
 
-# NOTE: If the system does not have NUMA, then comment this out if you wish
+# NOTE: If the system does not have NUMA, then comment this out
 checkNumaReadiness
 
 if [ "$MODE" == "multi-jvm" ]; then

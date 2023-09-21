@@ -36,6 +36,7 @@
 export NUM_OF_RUNS=1
 export NODE_COUNT=2                                         # Set to 1 if not running on NUMA
 # Number of groups
+#export GROUP_COUNT=1                                       # Scale Run 0, e.g., Pretend we are a Composite Run
 export GROUP_COUNT=2                                        # Scale Run 1
 #export GROUP_COUNT=4                                       # Scale Run 2
 #export GROUP_COUNT=8                                       # Scale Run 3
@@ -61,12 +62,11 @@ export TI_JVM_COUNT=1                                       # Number of TI's per
 
 # export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=$TIER1 -Dspecjbb.forkjoin.workers.Tier2=$TIER2 -Dspecjbb.forkjoin.workers.Tier3=$TIER3 -Dspecjbb.customerDriver.threads.saturate=$THREADS_SATURATION -Dspecjbb.comm.connect.selector.runner.count=$SELECTOR_RUNNER_COUNT"
 # 2, 4, 8, 16 Groups
-export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=112 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
+export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=108 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 1
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=52 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 2
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 3
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=10 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 4
 
-#export SPECJBB_OPTS_C="-Dspecjbb.group.count=2 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=112 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
-#export SPECJBB_OPTS_C="-Dspecjbb.group.count=4 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=56 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
-#export SPECJBB_OPTS_C="-Dspecjbb.group.count=8 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=28 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
-#export SPECJBB_OPTS_C="-Dspecjbb.group.count=16 -Dspecjbb.txi.pergroup.count=1 -Dspecjbb.forkjoin.workers.Tier1=14 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"
 #export SPECJBB_OPTS_TI=""
 export SPECJBB_OPTS_BE=""
 
