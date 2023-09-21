@@ -35,10 +35,11 @@
 ###################################################################################
 export NUM_OF_RUNS=1
 export NODE_COUNT=2                                         # Set to 1 if not running on NUMA
-export GROUP_COUNT=2                                        # Number of groups
-#export GROUP_COUNT=4                                        # Number of groups
-#export GROUP_COUNT=8                                        # Number of groups
-#export GROUP_COUNT=16                                        # Number of groups
+# Number of groups
+export GROUP_COUNT=2                                        # Scale Run 1
+#export GROUP_COUNT=4                                       # Scale Run 2
+#export GROUP_COUNT=8                                       # Scale Run 3
+#export GROUP_COUNT=16                                      # Scale Run 4
 export GROUPS_PER_NODE_COUNT=$((GROUP_COUNT/NODE_COUNT))    # Number of groups PER NUMA node
 export TI_JVM_COUNT=1                                       # Number of TI's per group
 
@@ -104,13 +105,13 @@ export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 #export BE_PARALLEL_GC_THREADS=4
 
 # Default Configuration e.g., Written out in full: export JAVA_OPTS_BE="-Xms4g -Xmx4g -Xmn3g -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:-UseAdaptiveSizePolicy" 
+#export JAVA_OPTS_BE="-Xms256M -Xmx256M -Xmn188M -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AlwaysPreTouch -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 #export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 # 2, 4, 8, 16 Groups
-export JAVA_OPTS_BE="-Xms256M -Xmx256M -Xmn188M -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AlwaysPreTouch -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-#export JAVA_OPTS_BE="-Xms168G -Xmx168G -Xmn160G -XX:+UseParallelGC -XX:ParallelGCThreads=54 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-#export JAVA_OPTS_BE="-Xms84G -Xmx84G -Xmn80G -XX:+UseParallelGC -XX:ParallelGCThreads=26 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-#export JAVA_OPTS_BE="-Xms42G -Xmx42G -Xmn40G -XX:+UseParallelGC -XX:ParallelGCThreads=12 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-#export JAVA_OPTS_BE="-Xms21G -Xmx21G -Xmn20G -XX:+UseParallelGC -XX:ParallelGCThreads=5 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+export JAVA_OPTS_BE="-Xms168G -Xmx168G -Xmn160G -XX:+UseParallelGC -XX:ParallelGCThreads=54 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"    # Scale Run 1
+#export JAVA_OPTS_BE="-Xms84G -Xmx84G -Xmn80G -XX:+UseParallelGC -XX:ParallelGCThreads=26 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"      # Scale Run 2
+#export JAVA_OPTS_BE="-Xms42G -Xmx42G -Xmn40G -XX:+UseParallelGC -XX:ParallelGCThreads=12 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"      # Scale Run 3
+#export JAVA_OPTS_BE="-Xms21G -Xmx21G -Xmn20G -XX:+UseParallelGC -XX:ParallelGCThreads=5 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"       # Scale Run 4
 
 ###################################################################################
 # Extra Controller Configuration

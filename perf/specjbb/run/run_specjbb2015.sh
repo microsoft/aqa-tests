@@ -24,22 +24,22 @@
 
 # Set your Java executable here
 # e.g., JAVA=/usr/lib/jvm/java-17-openjdk-arm64/bin/java
-JAVA=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/bin/java
-#JAVA=
+#JAVA=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/bin/java
+JAVA=
 
 # Set the location of this project
 # e.g., export SPECJBB_BASEDIR=/home/username/workspace/microsoft/aqa-tests/perf/specjbb
-export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
+#export SPECJBB_BASEDIR=/Users/martijnverburg/Documents/workspace/microsoft/aqa-tests/perf/specjbb
 # RUN_SCRIPTS_DIR & RUN_OPTIONS_DIR should not need altering
-#export SPECJBB_BASEDIR=
+export SPECJBB_BASEDIR=
 RUN_SCRIPTS_DIR=$SPECJBB_BASEDIR/run
 RUN_OPTIONS_DIR=$SPECJBB_BASEDIR/run/options
 
 # Set the location of the extracted SPECjbb folder
 # e.g., export SPECJBB_SRC=/home/username/workspace/microsoft/workspace/SPECjbb2015-1.03
-export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
+#export SPECJBB_SRC=/Users/martijnverburg/Documents/workspace/SPECjbb2015-1.03
 # SPECJBB_JAR & SPECJBB_CONFIG should not need altering
-#export SPECJBB_SRC=
+export SPECJBB_SRC=
 SPECJBB_JAR=$SPECJBB_SRC/specjbb2015.jar
 SPECJBB_CONFIG=$SPECJBB_SRC/config
 
@@ -118,7 +118,7 @@ function runSpecJbbMulti() {
     timestamp=$(date +%Y%m%d_%H%M%S)
 
     # Some O/S setup before each run, see "../../../perf/benchmark_setup.sh"
-    #beforeEachRun
+    beforeEachRun
 
     # Create temp result directory                
     local result
@@ -169,10 +169,10 @@ function runSpecJbbMulti() {
     CPUS_PER_GROUP=$((CPUS_PER_NODE/GROUPS_PER_NODE_COUNT))      # e.g, 28
     
     # Hardcoded value depending on how you want to do scaling runs    
-    CPUS_PER_BACKEND=54
-    #CPUS_PER_BACKEND=26
-    #CPUS_PER_BACKEND=12
-    #CPUS_PER_BACKEND=5
+    CPUS_PER_BACKEND=54     # Scale Run 1
+    #CPUS_PER_BACKEND=26    # Scale Run 2
+    #CPUS_PER_BACKEND=12    # Scale Run 3
+    #CPUS_PER_BACKEND=5     # Scale Run 4
 
     CPUS_FOR_NON_BE=$((CPUS_PER_NODE-$((CPUS_PER_BACKEND*GROUPS_PER_NODE_COUNT))))
     OFFSET=$((CPUS_FOR_NON_BE/2))
@@ -242,8 +242,8 @@ function runSpecJbbMulti() {
             # shellcheck disable=SC2086
             local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
             echo "$transactionInjectorCommand"
-            #eval "${transactionInjectorCommand}"
-            #echo -e "\t${transactionInjectorName} PID = $!"
+            eval "${transactionInjectorCommand}"
+            echo -e "\t${transactionInjectorName} PID = $!"
 
             # Sleep for 1 second to allow each transaction injector JVM to start.
             # TODO this seems arbitrary, we should detect the actual start of the TI
@@ -259,12 +259,12 @@ function runSpecJbbMulti() {
         echo "Start $backendName"
         # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
         # shellcheck disable=SC2086
-        #local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
+        local backendCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
         # NOTE: If you are not running in NUMA mode then remove the numactl --physcpubind=$cpuRange --localalloc prefix
-        local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
+        #local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
         echo "$backendCommand"
-        #eval "${backendCommand}"
-        #echo -e "\t$backendName PID = $!"
+        eval "${backendCommand}"
+        echo -e "\t$backendName PID = $!"
 
         # Sleep for 1 second to allow each backend JVM to start.
         # TODO this seems arbitrary, we should detect the actual start of the BE
@@ -368,7 +368,7 @@ function runSpecJbbComposite() {
 }
 
 # NOTE: If the system does not have NUMA, then comment this out if you wish
-#checkNumaReadiness
+checkNumaReadiness
 
 if [ "$MODE" == "multi-jvm" ]; then
     echo "Running in MultiJVM mode"
