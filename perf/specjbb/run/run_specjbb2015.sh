@@ -169,8 +169,8 @@ function runSpecJbbMulti() {
     CPUS_PER_GROUP=$((CPUS_PER_NODE/GROUPS_PER_NODE_COUNT))      # e.g, 28
     
     # Hardcoded value depending on how you want to do scaling runs    
-    #CPUS_PER_BACKEND=54
-    CPUS_PER_BACKEND=26
+    CPUS_PER_BACKEND=54
+    #CPUS_PER_BACKEND=26
     #CPUS_PER_BACKEND=12
     #CPUS_PER_BACKEND=5
 
@@ -205,32 +205,29 @@ function runSpecJbbMulti() {
         # We use some complicated arithmetic to create a CPU ranges             NODE 0 GROUP 0              NODE 1 GROUP 0
         if [ $groupNumber == 0 ] ; then
           cpuInit=$((cpuInit))                                                  # 0                         56         
-          becpuInit=$((cpuInit+OFFSET))                                         # 0 + 1 = 1                 56 + 1 = 57
-          cpuMax=$(($((cpuInit+CPUS_PER_GROUP))-1))                             # 0 + 56 - 1 = 55           56 + 56 - 1 = 111
-          if [ $GROUPS_PER_NODE_COUNT == 1 ] ; then
-            becpuMax=$((cpuMax-OFFSET))                                         # 55 - 1 = 54               111 - 1 = 110
-          else
-            becpuMax=$((cpuMax))                                                
-          fi
         else
-          cpuInit=$((cpuInit+CPUS_PER_GROUP))
-          becpuInit=$((cpuInit))                                    
-          cpuMax=$(($((cpuInit+CPUS_PER_GROUP))-1))                             
-          becpuMax=$((cpuMax-OFFSET))                                                   
+          cpuInit=$((cpuInit+CPUS_PER_BACKEND))
         fi
+        becpuInit=$((cpuInit+OFFSET))                                           # 0 + 1 = 1                 56 + 1 = 57
+        becpuMax=$((becpuInit+CPUS_PER_BACKEND-1))                              # 1 + 54 - 1 = 54           57 + 54 - 1 = 110
         
         local cpuRange="${becpuInit}-${becpuMax}"                               # 1-54                      57-110
         echo "cpuRange to be used for BE is: $cpuRange"
 
-                                                                                  # NODE 0 GROUP 0          NODE 0 GROUP 1          NODE 1 GROUP 0     NODE 1 GROUP 1
-        #cpuInit=$((cpuInit))                                                     # 0                                               56
-        #cpuInit=$((cpuInit+CPUS_PER_GROUP))                                      #                         28 + 28 = 56                               56 + 28 = 84
-        #becpuInit=$((cpuInit+OFFSET))                                            # 0 + 2 = 2                                       56 + 2 = 58        
-        #becpuInit=$((cpuInit))                                                   #                         28                                         84
-        #cpuMax=$(($((cpuInit+CPUS_PER_GROUP))-1))                                # 0 + 28 - 1 = 27         28 + 28 - 1 = 55        56 + 28 -1 = 83    84 + 28 -1 = 111
-        #becpuMax=$((cpuMax))                                                     # 27                                              83        
-        #becpuMax=$((cpuMax-OFFSET))                                              #                         55 - 2 = 53                                111 - 2 = 109
-        #cpuRange="${becpuInit}-${becpuMax}"                                      # 2-27                    28-53                   58-83              84-109
+                                                                                # NODE 0 GROUP 0      NODE 0 GROUP 1      NODE 1 GROUP 0      NODE 1 GROUP 1
+        #cpuInit=$((cpuInit))                                                   # 0                                       56
+        #cpuInit=$((cpuInit+CPUS_PER_BACKEND))                                  #                     0 + 26 = 26                             56 + 26 = 82
+        #becpuInit=$((cpuInit+OFFSET))                                          # 0 + 2 = 2           26 + 2 = 28         56 + 2 = 58         82 + 2 = 84
+        #becpuMax=$((becpuInit+CPUS_PER_BACKEND-1))                             # 2 + 26 - 1 = 27     28 + 26 - 1 = 53    58 + 26 - 1 = 83    84 + 26 - 1 = 109
+        #cpuRange="${becpuInit}-${becpuMax}"                                    # 2-27                28-53               58-83               84-109
+        #echo "cpuRange used for BE is: $cpuRange"        
+
+                                                                                # NODE 0 GROUP 0      NODE 0 GROUP 1      NODE 0 GROUP 2      NODE 0 GROUP 3      NODE 1 GROUP 0      NODE 1 GROUP 1      NODE 1 GROUP 2      NODE 1 GROUP 3
+        #cpuInit=$((cpuInit))                                                   # 0                                                                               56
+        #cpuInit=$((cpuInit+CPUS_PER_BACKEND))                                  #                     0 + 12 = 12         12 + 12 = 24        24 + 12 = 36                            56 + 12 = 68        68 + 12 = 80        80 + 12 = 92
+        #becpuInit=$((cpuInit+OFFSET))                                          # 0 + 4 = 4           12 + 4 = 16         24 + 4 = 28         36 + 4 = 40                             68 + 4 = 72         80 + 4 = 84         92 + 4 = 96
+        #becpuMax=$((becpuInit+CPUS_PER_BACKEND-1))                             # 4 + 12 - 1 = 15     16 + 12 - 1 = 27    28 + 12 - 1 = 39    40 + 12 - 1 = 51    60 + 12 - 1 = 71    72 + 12 - 1 = 83    84 + 12 - 1 = 95    96 + 12 - 1 = 107    
+        #cpuRange="${becpuInit}-${becpuMax}"                                    # 4-15                16-27               28-39               40-51               60-71               72-83               84-95               96-107
         #echo "cpuRange used for BE is: $cpuRange"
 
         for ((injectorNumber=1; injectorNumber<TI_JVM_COUNT+1; injectorNumber=injectorNumber+1)); do
@@ -245,8 +242,8 @@ function runSpecJbbMulti() {
             # shellcheck disable=SC2086
             local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
             echo "$transactionInjectorCommand"
-            eval "${transactionInjectorCommand}"
-            echo -e "\t${transactionInjectorName} PID = $!"
+            #eval "${transactionInjectorCommand}"
+            #echo -e "\t${transactionInjectorName} PID = $!"
 
             # Sleep for 1 second to allow each transaction injector JVM to start.
             # TODO this seems arbitrary, we should detect the actual start of the TI
@@ -266,8 +263,8 @@ function runSpecJbbMulti() {
         # NOTE: If you are not running in NUMA mode then remove the numactl --physcpubind=$cpuRange --localalloc prefix
         local backendCommand="${JAVA} ${JAVA_OPTS_BE_WITH_GC_LOG} ${SPECJBB_OPTS_BE} -jar ${SPECJBB_JAR} -m BACKEND -G=$groupId -J=$backendJvmId ${MODE_ARGS_BE} > ${backendName}.log 2>&1 &"
         echo "$backendCommand"
-        eval "${backendCommand}"
-        echo -e "\t$backendName PID = $!"
+        #eval "${backendCommand}"
+        #echo -e "\t$backendName PID = $!"
 
         # Sleep for 1 second to allow each backend JVM to start.
         # TODO this seems arbitrary, we should detect the actual start of the BE

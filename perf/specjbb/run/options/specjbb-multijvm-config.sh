@@ -35,7 +35,10 @@
 ###################################################################################
 export NUM_OF_RUNS=1
 export NODE_COUNT=2                                         # Set to 1 if not running on NUMA
-export GROUP_COUNT=4                                        # Number of groups
+export GROUP_COUNT=2                                        # Number of groups
+#export GROUP_COUNT=4                                        # Number of groups
+#export GROUP_COUNT=8                                        # Number of groups
+#export GROUP_COUNT=16                                        # Number of groups
 export GROUPS_PER_NODE_COUNT=$((GROUP_COUNT/NODE_COUNT))    # Number of groups PER NUMA node
 export TI_JVM_COUNT=1                                       # Number of TI's per group
 
@@ -84,9 +87,9 @@ export SPECJBB_OPTS_BE=""
 # hardware requirements suggested by SPECjbb 
 # (see the SPECjbb 2015 user guide, section 2.3 'Minimum hardware requirements', for more details)
 
-export C_XMS=2g
-export C_XMX=2g
-export C_XMN=1536m
+export C_XMS=2G
+export C_XMX=2G
+export C_XMN=1536M
 export C_PARALLEL_GC_THREADS=2
 export C_CI_COMPILER_COUNT=2
 
@@ -95,22 +98,19 @@ export JAVA_OPTS_C="-Xms$C_XMS -Xmx$C_XMX -Xmn$C_XMN -XX:+UseParallelGC -XX:Para
 export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 
 # Backend has a different configuration
-#export BE_XMS=4g
-#export BE_XMX=4g
-#export BE_XMN=3g
-#export BE_PARALLEL_GC_THREADS=4   # 52
+#export BE_XMS=4G
+#export BE_XMX=4G
+#export BE_XMN=3G
+#export BE_PARALLEL_GC_THREADS=4
 
 # Default Configuration e.g., Written out in full: export JAVA_OPTS_BE="-Xms4g -Xmx4g -Xmn3g -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:-UseAdaptiveSizePolicy" 
 #export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 # 2, 4, 8, 16 Groups
-# 384GB -4G (Controller) -8G (Tx Injectors) -4G (OS) = 368G (Backends) --> 368G / 2 = 184G (per backend)
 export JAVA_OPTS_BE="-Xms256M -Xmx256M -Xmn188M -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AlwaysPreTouch -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-#export JAVA_OPTS_BE="-Xms184G -Xmx184G -Xmn165G -XX:+UseParallelGC -XX:ParallelGCThreads=52 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-
-#export JAVA_OPTS_BE="-Xms92G -Xmx92G -Xmn82G -XX:+UseParallelGC -XX:ParallelGCThreads=25 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-#export JAVA_OPTS_BE="-Xms46G -Xmx46G -Xmn41G -XX:+UseParallelGC -XX:ParallelGCThreads=12 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-#export JAVA_OPTS_BE="-Xms23G -Xmx23G -Xmn20G -XX:+UseParallelGC -XX:ParallelGCThreads=6 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
-#export JAVA_OPTS_BE="-Xms12G -Xmx12G -Xmn10G -XX:+UseParallelGC -XX:ParallelGCThreads=3 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms168G -Xmx168G -Xmn160G -XX:+UseParallelGC -XX:ParallelGCThreads=54 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms84G -Xmx84G -Xmn80G -XX:+UseParallelGC -XX:ParallelGCThreads=26 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms42G -Xmx42G -Xmn40G -XX:+UseParallelGC -XX:ParallelGCThreads=12 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms21G -Xmx21G -Xmn20G -XX:+UseParallelGC -XX:ParallelGCThreads=5 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 
 ###################################################################################
 # Extra Controller Configuration
