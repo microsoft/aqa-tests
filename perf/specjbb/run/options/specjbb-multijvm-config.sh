@@ -34,15 +34,16 @@
 #
 ###################################################################################
 export NUM_OF_RUNS=1
-export NODE_COUNT=2                                         # Set to 1 if not running on NUMA
+export NODE_COUNT=1                                         # Set to 1 if not running on NUMA
+#export NODE_COUNT=2                                        # Set to 1 if not running on NUMA
 # Number of groups
-#export GROUP_COUNT=1                                       # Scale Run 0, e.g., Pretend we are a Composite Run
-export GROUP_COUNT=2                                        # Scale Run 1
+export GROUP_COUNT=1                                       # Scale Run 0, e.g., Pretend we are a Composite Run
+#export GROUP_COUNT=2                                        # Scale Run 1
 #export GROUP_COUNT=4                                       # Scale Run 2
 #export GROUP_COUNT=8                                       # Scale Run 3
 #export GROUP_COUNT=16                                      # Scale Run 4
 export GROUPS_PER_NODE_COUNT=$((GROUP_COUNT/NODE_COUNT))    # Number of groups PER NUMA node
-export TI_JVM_COUNT=1                                       # Number of TI's per group
+export TI_JVM_COUNT=2                                       # Number of TI's per group
 
 ###################################################################################
 # SPECjbb config
@@ -62,7 +63,8 @@ export TI_JVM_COUNT=1                                       # Number of TI's per
 
 # export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=$TIER1 -Dspecjbb.forkjoin.workers.Tier2=$TIER2 -Dspecjbb.forkjoin.workers.Tier3=$TIER3 -Dspecjbb.customerDriver.threads.saturate=$THREADS_SATURATION -Dspecjbb.comm.connect.selector.runner.count=$SELECTOR_RUNNER_COUNT"
 # 2, 4, 8, 16 Groups
-export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=108 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 1
+export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=216 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 0, e.g., Pretend we are a Composite Run
+#export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=108 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 1
 #export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=52 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 2
 #export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=24 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 3
 #export SPECJBB_OPTS_C="-Dspecjbb.group.count=$GROUP_COUNT -Dspecjbb.txi.pergroup.count=$TI_JVM_COUNT -Dspecjbb.forkjoin.workers.Tier1=10 -Dspecjbb.customerDriver.threads.saturate=96 -Dspecjbb.comm.connect.selector.runner.count=10"     # Scale Run 4
@@ -108,7 +110,12 @@ export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 #export JAVA_OPTS_BE="-Xms256M -Xmx256M -Xmn188M -XX:+UseParallelGC -XX:ParallelGCThreads=2 -XX:+AlwaysPreTouch -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 #export JAVA_OPTS_BE="-Xms$BE_XMS -Xmx$BE_XMX -Xmn$BE_XMN -XX:+UseParallelGC -XX:ParallelGCThreads=$BE_PARALLEL_GC_THREADS -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 # 2, 4, 8, 16 Groups
-export JAVA_OPTS_BE="-Xms168G -Xmx168G -Xmn160G -XX:+UseParallelGC -XX:ParallelGCThreads=54 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"    # Scale Run 1
+# MM Cedar Crest SKU - TODO double check the -xMx and -Xmn values
+# export JAVA_OPTS_BE="-XmsG -Xmx672G -Xmn650G -XX:+UseParallelGC -XX:ParallelGCThreads=108 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"    # Scale Run 0  e.g., Pretend we are a Composite Run
+
+# LL Cedar Crest SKU
+export JAVA_OPTS_BE="-Xms336G -Xmx336G -Xmn320G -XX:+UseParallelGC -XX:ParallelGCThreads=108 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"    # Scale Run 0  e.g., Pretend we are a Composite Run
+#export JAVA_OPTS_BE="-Xms168G -Xmx168G -Xmn160G -XX:+UseParallelGC -XX:ParallelGCThreads=54 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"    # Scale Run 1
 #export JAVA_OPTS_BE="-Xms84G -Xmx84G -Xmn80G -XX:+UseParallelGC -XX:ParallelGCThreads=26 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"      # Scale Run 2
 #export JAVA_OPTS_BE="-Xms42G -Xmx42G -Xmn40G -XX:+UseParallelGC -XX:ParallelGCThreads=12 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"      # Scale Run 3
 #export JAVA_OPTS_BE="-Xms21G -Xmx21G -Xmn20G -XX:+UseParallelGC -XX:ParallelGCThreads=5 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"       # Scale Run 4
