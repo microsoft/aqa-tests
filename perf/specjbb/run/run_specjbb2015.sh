@@ -213,7 +213,6 @@ function runSpecJbbMulti() {
         
         local cpuRange="${becpuInit}-${becpuMax}"                               # 1-54                      57-110
         echo "cpuRange to be used for BE is: $cpuRange"
-
                                                                                 # NODE 0 GROUP 0      NODE 0 GROUP 1      NODE 1 GROUP 0      NODE 1 GROUP 1
         #cpuInit=$((cpuInit))                                                   # 0                                       56
         #cpuInit=$((cpuInit+CPUS_PER_BACKEND))                                  #                     0 + 26 = 26                             56 + 26 = 82
@@ -235,10 +234,13 @@ function runSpecJbbMulti() {
 
             echo "Start $transactionInjectorName"
 
+            # Add GC logging to the TI's JVM options. We use the recommended settings for GCToolkit (https://www.github.com/microsoft/gctoolkit).
+            JAVA_OPTS_TI_WITH_GC_LOG="$JAVA_OPTS_TI -Xlog:gc*,gc+ref=debug,gc+phases=debug,gc+age=trace,safepoint:file=${transactionInjectorName}_gc.log"
+
             # NOTE: We are deliberately not running TI's bound to a particular range, so we remove the prefix of numactl --physcpubind=$cpuRange --localalloc          
             # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
             # shellcheck disable=SC2086
-            local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
+            local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI_WITH_GC_LOG} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
             echo "$transactionInjectorCommand"
             eval "${transactionInjectorCommand}"
             echo -e "\t${transactionInjectorName} PID = $!"
