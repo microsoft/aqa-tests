@@ -130,7 +130,7 @@ jdk/internal/vm/Continuation/LiveFramesDriver.java https://github.com/eclipse-op
 jdk/internal/vm/Continuation/Scoped.java https://github.com/eclipse-openj9/openj9/issues/15163 generic-all
 jdk/modules/incubator/ImageModules.java https://github.com/adoptium/aqa-tests/issues/1267 macosx-all
 jni/nullCaller/NullCallerTest.java https://github.com/eclipse-openj9/openj9/issues/15370 linux-ppc64le,macosx-all
-java/lang/Thread/virtual/stress/Skynet.java#default https://github.com/eclipse-openj9/openj9/issues/16728 linux-ppc64le,aix-all
+java/lang/Thread/virtual/stress/Skynet.java#default https://github.com/eclipse-openj9/openj9/issues/16728 aix-all
 
 ############################################################################
 
@@ -493,7 +493,6 @@ vm/verifier/VerifyProtectedConstructor.java https://github.com/eclipse-openj9/op
 
 # jdk_foreign
 
-java/foreign/nested/TestNested.java https://github.com/eclipse-openj9/openj9/issues/17674 generic-all
 java/foreign/stackwalk/TestAsyncStackWalk.java#default_gc https://github.com/eclipse-openj9/openj9/issues/13993 generic-all
 java/foreign/stackwalk/TestAsyncStackWalk.java#shenandoah https://github.com/eclipse-openj9/openj9/issues/13993 generic-all
 java/foreign/stackwalk/TestAsyncStackWalk.java#zgc https://github.com/eclipse-openj9/openj9/issues/13993 generic-all
