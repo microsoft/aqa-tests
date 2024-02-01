@@ -31,7 +31,8 @@ export JAVA_OPTS_TI="${JAVA_OPTS_C}"
 
 # TODO - This is a temporary hard coded configuration to get the run to complete
 # Configuration for a Maxed out (from a scaling perspective) Standard_D64s_v5 run as per the Java Engineering Group Azure VM SKU SPECjbb2015 guide
-export JAVA_OPTS_BE="-Xms192g -Xmx192g -Xmn173g -XX:+UseParallelGC -XX:ParallelGCThreads=64 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+#export JAVA_OPTS_BE="-Xms192g -Xmx192g -Xmn173g -XX:+UseParallelGC -XX:ParallelGCThreads=64 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
+export JAVA_OPTS_BE="-Xms32g -Xmx32g -Xmn28g -XX:+UseParallelGC -XX:ParallelGCThreads=64 -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:+UseTransparentHugePages -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData"
 
 export MODE_ARGS_C=""
 export MODE_ARGS_TI=""
