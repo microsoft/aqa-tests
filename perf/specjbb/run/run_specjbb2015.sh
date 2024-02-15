@@ -157,8 +157,9 @@ function runSpecJbbMulti() {
     getTotalCPUs
     # Manually override the total CPU count if you do not want to use all detected cores
     #TOTAL_CPU_COUNT=
-    TOTAL_CPU_COUNT=112
-    
+    #TOTAL_CPU_COUNT=112 # Bare metal
+    TOTAL_CPU_COUNT=96 # VM
+
     # Calculate the number of CPUs available for each NUMA node
     # Manually override the CPUs per node count
     #CPUS_PER_NODE=
@@ -237,9 +238,10 @@ function runSpecJbbMulti() {
             # Add GC logging to the TI's JVM options. We use the recommended settings for GCToolkit (https://www.github.com/microsoft/gctoolkit).
             JAVA_OPTS_TI_WITH_GC_LOG="$JAVA_OPTS_TI -Xlog:gc*,gc+ref=debug,gc+phases=debug,gc+age=trace,safepoint:file=${transactionInjectorName}_gc.log"
 
-            # NOTE: We are deliberately not running TI's bound to a particular range, so we remove the prefix of numactl --physcpubind=$cpuRange --localalloc          
+            # NOTE: We are deliberately not running TI's bound to a particular range, so we remove the prefix of numactl --physcpubind=$cpuRange --localalloc
+            #local transactionInjectorCommand="numactl --physcpubind=$cpuRange --localalloc ${JAVA} ${JAVA_OPTS_TI_WITH_GC_LOG} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
             # We don't double quote escape all arguments as some of those are being passed in as a list with spaces
-            # shellcheck disable=SC2086
+            # shellcheck disable=SC2086            
             local transactionInjectorCommand="${JAVA} ${JAVA_OPTS_TI_WITH_GC_LOG} ${SPECJBB_OPTS_TI} -jar ${SPECJBB_JAR} -m TXINJECTOR -G=$groupId -J=${transactionInjectorJvmId} ${MODE_ARGS_TI} > ${transactionInjectorName}.log 2>&1 &"
             echo "$transactionInjectorCommand"
             eval "${transactionInjectorCommand}"
