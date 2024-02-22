@@ -1,3 +1,5 @@
+
+
 ############################################################################
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -208,7 +210,8 @@ java/net/httpclient/websocket/PendingTextPongClose.java https://github.com/eclip
 # jdk_io
 
 java/io/CharArrayReader/OverflowInRead.java	https://github.com/adoptium/aqa-tests/issues/1500	generic-all
-java/io/File/GetXSpace.java	https://bugs.openjdk.java.net/browse/JDK-8251466 windows-all
+#java/io/File/GetXSpace.java https://bugs.openjdk.org/browse/JDK-8251017 linux-arm, aix-all
+java/io/File/GetXSpace.java https://bugs.openjdk.java.net/browse/JDK-8251466 windows-all, linux-arm, aix-all
 java/io/FileInputStream/UnreferencedFISClosesFd.java  https://github.com/eclipse-openj9/openj9/issues/3543 generic-all
 java/io/FileOutputStream/UnreferencedFOSClosesFd.java https://github.com/eclipse-openj9/openj9/issues/3543 generic-all
 
@@ -272,6 +275,7 @@ java/rmi/server/UnicastServerRef/serialFilter/FilterUSRTest.java	https://github.
 security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java	https://github.com/adoptium/aqa-tests/issues/2074	generic-all
 security/infra/java/security/cert/CertPathValidator/certification/BuypassCA.java	https://github.com/adoptium/aqa-tests/issues/2074	generic-all
 security/infra/java/security/cert/CertPathValidator/certification/QuoVadisCA.java	https://github.com/adoptium/aqa-tests/issues/2074	generic-all
+java/security/cert/CertPathBuilder/akiExt/AKISerialNumber.java https://github.com/eclipse-openj9/openj9/issues/18875 generic-all
 java/security/KeyPairGenerator/FinalizeHalf.java    https://github.com/eclipse-openj9/openj9/issues/12807   windows-all
 java/security/SecureRandom/ApiTest.java https://github.com/eclipse-openj9/openj9/issues/16734 windows-all
 java/security/SecureRandom/EnoughSeedTest.java https://github.com/eclipse-openj9/openj9/issues/16734 windows-all
@@ -336,15 +340,6 @@ sun/security/krb5/auto/NoAddresses.java https://github.com/adoptium/aqa-tests/is
 ######################################################################################################
 
 # jdk_security_infra
-
-security/infra/java/security/cert/CertPathValidator/certification/GoogleCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/AmazonCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/BuypassCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/QuoVadisCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/EntrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/DTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/HaricaCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
 
 ######################################################################################################
 

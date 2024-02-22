@@ -160,10 +160,6 @@ com/sun/jdi/OnJcmdTest.java https://github.com/adoptium/aqa-tests/issues/2837 wi
 
 # jdk_jfr
 
-jdk/jfr/jvm/TestJFRIntrinsic.java https://bugs.openjdk.java.net/browse/JDK-8239423 linux-arm
-jdk/jfr/api/consumer/TestRecordedFrame.java https://bugs.openjdk.java.net/browse/JDK-8247203 linux-arm,linux-ppc64le
-jdk/jfr/api/recording/state/TestStateInvalid.java https://github.com/adoptium/aqa-tests/issues/3836 windows-x86
-
 ############################################################################
 
 # jdk_nio
@@ -195,14 +191,13 @@ java/nio/file/Files/probeContentType/Basic.java https://github.com/adoptium/infr
 # jdk_security1
 
 java/security/KeyFactory/KeyFactoryGetKeySpecForInvalidSpec.java https://github.com/adoptium/aqa-tests/issues/2790 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/LetsEncryptCA.java https://bugs.openjdk.java.net/browse/JDK-8270280 generic-all
 
 ############################################################################
 
 # jdk_security3
 
 jdk/security/jarsigner/JarWithOneNonDisabledDigestAlg.java https://github.com/adoptium/aqa-tests/issues/2123 aix-all
-sun/security/lib/cacerts/VerifyCACerts.java https://github.com/adoptium/aqa-tests/issues/2123 generic-all
+sun/security/lib/cacerts/VerifyCACerts.java https://github.com/adoptium/aqa-tests/issues/4808 generic-all
 sun/security/pkcs11/fips/SunJSSEFIPSInit.java https://github.com/adoptium/aqa-tests/issues/2123 linux-all
 sun/security/ssl/SSLSessionImpl/NoInvalidateSocketException.java https://github.com/adoptium/aqa-tests/issues/2123 generic-all
 sun/security/ssl/X509TrustManagerImpl/Symantec/Distrust.java https://github.com/adoptium/aqa-tests/issues/2123 generic-all
@@ -213,15 +208,6 @@ sun/security/pkcs11/Secmod/AddTrustedCert.java https://github.com/adoptium/aqa-t
 ############################################################################
 
 # jdk_security_infra
-
-security/infra/java/security/cert/CertPathValidator/certification/GoogleCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/AmazonCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/BuypassCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/QuoVadisCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/EntrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/DTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/HaricaCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
 
 ############################################################################
 
@@ -290,6 +276,7 @@ compiler/c2/cr6340864/TestShortVect.java https://github.com/adoptium/aqa-tests/i
 compiler/c2/TestReplaceEquivPhis.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/codegen/TestCharVect2.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/loopopts/TestUnswitchCloneSkeletonPredicates.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
+compiler/loopopts/TestRemoveEmptyCountedLoop.java https://bugs.openjdk.org/browse/JDK-8311964 windows-x86
 compiler/loopstripmining/AntiDependentLoadInOuterStripMinedLoop.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/loopstripmining/LoadDependsOnIfIdenticalToLoopExit.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/loopstripmining/TestConservativeAntiDep.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86

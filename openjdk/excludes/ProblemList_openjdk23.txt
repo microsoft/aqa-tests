@@ -65,6 +65,7 @@ jdk/modules/incubator/ImageModules.java https://github.com/adoptium/aqa-tests/is
 java/lang/Class/GetPackageBootLoaderChildLayer.java https://github.com/adoptium/aqa-tests/issues/1267 macosx-all
 # java/lang/String/StringRepeat.java https://bugs.openjdk.java.net/browse/JDK-8221400
 java/lang/String/StringRepeat.java https://github.com/adoptium/aqa-tests/issues/1272 windows-all,
+java/lang/String/concat/IntegerMinValue.java https://github.com/adoptium/aqa-tests/issues/4789 aix-all
 java/lang/invoke/VarHandles/VarHandleTestAccessBoolean.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
 java/lang/invoke/VarHandles/VarHandleTestAccessByte.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
 java/lang/invoke/VarHandles/VarHandleTestAccessChar.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
@@ -204,8 +205,8 @@ java/nio/channels/vthread/BlockingChannelOps.java#direct-register https://github
 
 # jdk_io
 
-java/io/File/GetXSpace.java https://bugs.openjdk.java.net/browse/JDK-8251466 windows-all
-
+#java/io/File/GetXSpace.java https://bugs.openjdk.org/browse/JDK-8251017 linux-arm, aix-all
+java/io/File/GetXSpace.java https://bugs.openjdk.java.net/browse/JDK-8251466 windows-all, linux-arm, aix-all
 ############################################################################
 
 # jdk_jdi
@@ -267,7 +268,7 @@ sun/security/ssl/SSLSocketImpl/SSLSocketLeak.java https://github.com/adoptium/aq
 # jdk_security3
 
 javax/net/ssl/SSLEngine/LargePacket.java https://bugs.openjdk.org/browse/JDK-8227651 generic-all
-sun/security/lib/cacerts/VerifyCACerts.java https://github.com/adoptium/aqa-tests/issues/3976 generic-all
+sun/security/lib/cacerts/VerifyCACerts.java https://github.com/adoptium/aqa-tests/issues/4808 generic-all
 sun/security/ssl/X509TrustManagerImpl/Symantec/Distrust.java https://github.com/adoptium/aqa-tests/issues/3976 generic-all
 
 ###########################################################################
@@ -281,15 +282,6 @@ sun/security/krb5/auto/Cleaners.java https://github.com/adoptium/aqa-tests/issue
 ###########################################################################
 
 # jdk_security_infra
-
-security/infra/java/security/cert/CertPathValidator/certification/AmazonCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/BuypassCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/QuoVadisCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/EntrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/DTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/HaricaCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/ActalisCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
 
 ############################################################################
 
@@ -426,31 +418,6 @@ compiler/codegen/aes/TestAESMain.java https://github.com/adoptium/aqa-tests/issu
 ############################################################################
 
 # jdk_jfr
-
-jdk/jfr/event/oldobject/TestAllocationTime.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/event/oldobject/TestHeapDeep.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/jcmd/TestJcmdDumpPathToGCRoots.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/event/oldobject/TestG1.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/api/consumer/TestRecordedFrame.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/event/allocation/TestObjectAllocationInNewTLABEvent.java https://github.com/adoptium/aqa-tests/issues/2870 windows-x86,linux-arm
-jdk/jfr/event/gc/collection/TestG1ParallelPhases.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/event/oldobject/TestListenerLeak.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/event/oldobject/TestObjectAge.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/event/oldobject/TestReferenceChainLimit.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/event/oldobject/TestThreadLocalLeak.java https://github.com/adoptium/aqa-tests/issues/2855 windows-x86
-jdk/jfr/jmx/streaming/TestClose.java https://github.com/adoptium/aqa-tests/issues/2865 windows-x86,linux-arm
-jdk/jfr/jmx/streaming/TestDelegated.java https://github.com/adoptium/aqa-tests/issues/2866 windows-x86,linux-arm
-jdk/jfr/jmx/streaming/TestEnableDisable.java https://github.com/adoptium/aqa-tests/issues/2866 windows-x86,linux-arm
-jdk/jfr/jmx/streaming/TestRemoteDump.java https://github.com/adoptium/aqa-tests/issues/2866 windows-x86,linux-arm
-jdk/jfr/jmx/streaming/TestRotate.java https://github.com/adoptium/aqa-tests/issues/2866 windows-x86,linux-arm
-# jdk/jfr/jmx/streaming/TestSetSettings.java https://github.com/adoptium/aqa-tests/issues/2985 linux-arm 
-jdk/jfr/jmx/streaming/TestSetSettings.java https://github.com/adoptium/aqa-tests/issues/2866 windows-x86,linux-arm
-jdk/jfr/jcmd/TestJcmdDump.java https://github.com/adoptium/aqa-tests/issues/3492 generic-all
-jdk/jfr/jmx/streaming/TestMetadataEvent.java https://github.com/adoptium/aqa-tests/issues/2985 linux-arm
-jdk/jfr/jmx/streaming/TestStart.java https://github.com/adoptium/aqa-tests/issues/2985 linux-arm,windows-x86
-jdk/jfr/jmx/TestGetRecordings.java https://github.com/adoptium/aqa-tests/issues/2754 linux-ppc64le
-jdk/jfr/event/gc/detailed/TestZUncommitEvent.java https://bugs.openjdk.org/browse/JDK-8248078 generic-all
-jdk/jfr/event/gc/detailed/TestGCLockerEvent.java https://github.com/adoptium/aqa-tests/issues/3817 windows-x64
 
 ###########################################################################
 

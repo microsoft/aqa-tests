@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 -->
-<playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../TKG/playlist.xsd">
+<playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../TKG/resources/playlist.xsd">
 	<test>
 		<testCaseName>CryptoTests</testCaseName>
 		<disables>
@@ -38,6 +38,9 @@
 		-jdk:$(Q)$(TEST_JDK_HOME)$(Q) \
 		$(Q)$(TEST_ROOT)$(D)functional$(D)security$(D)Crypto$(D)CryptoTest$(Q); \
 		$(TEST_STATUS)</command>
+		<features>
+			<feature>FIPS140_2:nonapplicable</feature>
+		</features>
 		<levels>
 			<level>extended</level>
 		</levels>

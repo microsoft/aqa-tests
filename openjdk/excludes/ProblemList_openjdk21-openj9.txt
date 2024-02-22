@@ -230,7 +230,8 @@ jdk/net/ExtendedSocketOption/DontFragmentTest.java https://github.com/adoptium/a
 # jdk_io
 
 java/io/CharArrayReader/OverflowInRead.java https://github.com/adoptium/aqa-tests/issues/1500 generic-all
-java/io/File/GetXSpace.java https://bugs.openjdk.java.net/browse/JDK-8251466 windows-all
+#java/io/File/GetXSpace.java https://bugs.openjdk.org/browse/JDK-8251017 linux-arm, aix-all
+java/io/File/GetXSpace.java https://bugs.openjdk.java.net/browse/JDK-8251466 windows-all, linux-arm, aix-all
 java/io/FileInputStream/UnreferencedFISClosesFd.java  https://github.com/eclipse-openj9/openj9/issues/3543 generic-all
 java/io/FileOutputStream/UnreferencedFOSClosesFd.java https://github.com/eclipse-openj9/openj9/issues/3543 generic-all
 
@@ -344,15 +345,12 @@ java/rmi/server/UnicastServerRef/serialFilter/FilterUSRTest.java https://github.
 
 # jdk_security
 
+java/security/cert/CertPathBuilder/akiExt/AKISerialNumber.java https://github.com/eclipse-openj9/openj9/issues/18875 generic-all
 java/security/KeyPairGenerator/FinalizeHalf.java    https://github.com/eclipse-openj9/openj9/issues/12807   windows-all
 java/security/SecureRandom/ApiTest.java https://github.com/eclipse-openj9/openj9/issues/16734 windows-all
 java/security/SecureRandom/EnoughSeedTest.java https://github.com/eclipse-openj9/openj9/issues/16734 windows-all
 java/security/Signature/ResetAfterException.java    https://github.com/eclipse-openj9/openj9/issues/12807   windows-all
 java/security/Signature/SignatureLength.java    https://github.com/eclipse-openj9/openj9/issues/12807   windows-all
-security/infra/java/security/cert/CertPathValidator/certification/BuypassCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/QuoVadisCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/ActalisCA.java https://github.com/adoptium/aqa-tests/issues/2074	generic-all
 
 ############################################################################
 
@@ -402,16 +400,6 @@ sun/security/krb5/auto/Cleaners.java https://github.com/eclipse-openj9/openj9/is
 
 # jdk_security_infra
 
-security/infra/java/security/cert/CertPathValidator/certification/GoogleCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/AmazonCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/BuypassCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/QuoVadisCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/EntrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/DTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/HaricaCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/ActalisCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-
 ########################################################################################################################################################
 
 # jdk_sound
@@ -445,6 +433,8 @@ java/util/Arrays/TimSortStackSize2.java https://github.com/eclipse-openj9/openj9
 java/util/BitSet/stream/BitSetStreamTest.java https://github.com/eclipse-openj9/openj9/issues/4720 linux-all
 java/util/concurrent/forkjoin/FJExceptionTableLeak.java https://github.com/eclipse-openj9/openj9/issues/3209 generic-all
 java/util/concurrent/locks/Lock/TimedAcquireLeak.java https://github.com/eclipse-openj9/openj9/issues/7125 macosx-all,linux-all,aix-all
+java/util/concurrent/locks/Lock/OOMEInAQS.java https://github.com/eclipse-openj9/openj9/issues/16659 generic-all
+java/util/concurrent/SynchronousQueue/Fairness.java https://github.com/eclipse-openj9/openj9/issues/18771 generic-all
 java/util/concurrent/TimeUnit/Basic.java https://github.com/adoptium/aqa-tests/issues/1665 windows-all
 java/util/logging/CheckZombieLockTest.java https://bugs.openjdk.java.net/browse/JDK-8148972 macosx-all,linux-all
 java/util/logging/LogManager/TestLoggerNames.java https://github.com/eclipse-openj9/openj9/issues/4561 generic-all
@@ -567,6 +557,7 @@ serviceability/jvmti/RedefineClasses/RedefinePreviousVersions.java https://githu
 serviceability/jvmti/vthread/ToggleNotifyJvmtiTest/ToggleNotifyJvmtiTest.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 serviceability/jvmti/vthread/FollowReferences/VThreadStackRefTest.java#default https://github.com/eclipse-openj9/openj9/issues/18426 generic-all
 serviceability/jvmti/vthread/FollowReferences/VThreadStackRefTest.java#no-vmcontinuations https://github.com/eclipse-openj9/openj9/issues/18426 generic-all
+serviceability/jvmti/thread/GetStackTrace/GetStackTraceAndRetransformTest/GetStackTraceAndRetransformTest.java https://github.com/eclipse-openj9/openj9/issues/18809 generic-all
 
 # jdk_container
 jdk/internal/platform/docker/TestDockerCpuMetrics.java https://github.com/eclipse-openj9/openj9/issues/16462 generic-all

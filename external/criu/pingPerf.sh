@@ -37,28 +37,42 @@ getCriuseccompproFile() {
 
 getSemeruDockerfile() {
     if [[ ! -f "Dockerfile.open.releases.full" ]]; then
-
         if [[ $jdkVersion ]]; then
+            jdkVersionDir=$jdkVersion
+            if [[ $jdkVersion == "21" ]]; then
+                jdkVersionDir="$jdkVersion-ea"
+            fi
             semeruDockerfile="Dockerfile.open.releases.full"
+            semeruDockerfileUrlBase="https://raw.githubusercontent.com/ibmruntimes/semeru-containers/ibm/$jdkVersionDir/jdk/${docker_os}"
             if [[ $docker_os == "ubi" ]]; then
-                echo "curl -OLJSks https://raw.githubusercontent.com/ibmruntimes/semeru-containers/ibm/$jdkVersion/jdk/${docker_os}/${docker_os}${docker_os_version}/${semeruDockerfile}"
-                curl -OLJSks https://raw.githubusercontent.com/ibmruntimes/semeru-containers/ibm/$jdkVersion/jdk/${docker_os}/${docker_os}${docker_os_version}/${semeruDockerfile}
+                echo "curl -OLJSks ${semeruDockerfileUrlBase}/${docker_os}${docker_os_version}/${semeruDockerfile}"
+                curl -OLJSks ${semeruDockerfileUrlBase}/${docker_os}${docker_os_version}/${semeruDockerfile}
                 if [[ ${PLATFORM} == *"ppc"*  &&  $docker_os_version == "8" ]]; then
                     findCommandAndReplace 'FROM registry.access.redhat.com/ubi8/ubi:latest' 'FROM registry.access.redhat.com/ubi8/ubi:latest \n COPY ubi.repo /etc/yum.repos.d/ \n ' $semeruDockerfile ";"
                 fi
                 findCommandAndReplace '\-H \"\${CRIU_AUTH_HEADER}\"' '--user \"\${DOCKER_REGISTRY_CREDENTIALS_USR}:\${DOCKER_REGISTRY_CREDENTIALS_PSW}\"' $semeruDockerfile ";"
                 findCommandAndReplace 'RUN --mount.*' 'ARG DOCKER_REGISTRY_CREDENTIALS_USR \n ARG DOCKER_REGISTRY_CREDENTIALS_PSW \n RUN set -eux; \\' $semeruDockerfile
-                findCommandAndReplace '\/opt\/java\/openjdk\/legal\/java.base\/LICENSE \/licenses;' "\/opt\/java\/openjdk\/legal\/java.base\/LICENSE \/licenses\/;" $semeruDockerfile
+                # in 21-ea, /opt/java/openjdk/legal/java.base/LICENSE does not exist. No need to replace
+                if [[ $jdkVersion != "21" ]]; then
+                    findCommandAndReplace '\/opt\/java\/openjdk\/legal\/java.base\/LICENSE \/licenses;' "\/opt\/java\/openjdk\/legal\/java.base\/LICENSE \/licenses\/;" $semeruDockerfile
+                fi
             else # docker_os is ubuntu
-                echo "curl -OLJSks https://raw.githubusercontent.com/ibmruntimes/semeru-containers/ibm/$jdkVersion/jdk/${docker_os}/${semeruDockerfile}"
-                curl -OLJSks https://raw.githubusercontent.com/ibmruntimes/semeru-containers/ibm/$jdkVersion/jdk/${docker_os}/${semeruDockerfile}
+                echo "curl -OLJSks ${semeruDockerfileUrlBase}/${semeruDockerfile}"
+                curl -OLJSks ${semeruDockerfileUrlBase}/${semeruDockerfile}
             fi
 
             findCommandAndReplace 'curl -LfsSo \/tmp\/openjdk.tar.gz ${BINARY_URL};' " " $semeruDockerfile
             findCommandAndReplace 'echo "\${ESUM} \*\/tmp\/openjdk.tar.gz" | sha256sum -c -;' " " $semeruDockerfile
-            findCommandAndReplace 'mkdir -p \/opt\/java\/openjdk; \\' "mkdir -p \/opt\/java\/openjdk;" $semeruDockerfile
-            findCommandAndReplace 'cd \/opt\/java\/openjdk; \\' "COPY NEWJDK\/ \/opt\/java\/openjdk" $semeruDockerfile
-            findCommandAndReplace 'tar -xf \/tmp\/openjdk.tar.gz --strip-components=1;' "RUN \/opt\/java\/openjdk\/bin\/java --version" $semeruDockerfile
+            if [[ $jdkVersion == "21" ]]; then
+                findCommandAndReplace 'mkdir -p \/opt\/java\/java-ea; \\' "mkdir -p \/opt\/java\/java-ea;" $semeruDockerfile
+                findCommandAndReplace 'cd \/opt\/java\/java-ea; \\' "COPY NEWJDK\/ \/opt\/java\/java-ea" $semeruDockerfile
+                findCommandAndReplace 'tar -xf \/tmp\/openjdk.tar.gz --strip-components=1;' "RUN \/opt\/java\/java-ea\/bin\/java --version" $semeruDockerfile
+            else
+                findCommandAndReplace 'mkdir -p \/opt\/java\/openjdk; \\' "mkdir -p \/opt\/java\/openjdk;" $semeruDockerfile
+                findCommandAndReplace 'cd \/opt\/java\/openjdk; \\' "COPY NEWJDK\/ \/opt\/java\/openjdk" $semeruDockerfile
+                findCommandAndReplace 'tar -xf \/tmp\/openjdk.tar.gz --strip-components=1;' "RUN \/opt\/java\/openjdk\/bin\/java --version" $semeruDockerfile
+
+            fi
 
             mkdir NEWJDK
             cp -r $testJDKPath/. NEWJDK/
@@ -103,10 +117,11 @@ prepare() {
         curCommitID=$(git rev-parse HEAD)
         echo "Using dockerfile from OpenLiberty/ci.docker repo branch $openLibertyBranch with commit hash $curCommitID"
         if [[ $docker_os == "ubi" ]]; then
-            # Temporarily OpenLiberty ubi dockerfile only supports openjdk 17, not 11
-            libertyDockerfilePath="releases/latest/beta/Dockerfile.${docker_os}.openjdk17"
+            # Temporarily OpenLiberty ubi dockerfile only supports openjdk 21, using it for 11 and 17 too
+            libertyDockerfilePath="releases/latest/beta/Dockerfile.${docker_os}.openjdk21"
             # replace OpenLiberty dockerfile base image
-            findCommandAndReplace "FROM icr.io\/appcafe\/ibm-semeru-runtimes:open-17-jdk-${docker_os}" "FROM local-ibm-semeru-runtimes:latest" $libertyDockerfilePath '/'
+            findCommandAndReplace "FROM icr.io\/appcafe\/ibm-semeru-runtimes:open-21-jre-${docker_os}9-minimal" "FROM local-ibm-semeru-runtimes:latest" $libertyDockerfilePath '/'
+            findCommandAndReplace "microdnf" "yum" $libertyDockerfilePath
         else # docker_os is ubuntu
             libertyDockerfilePath="releases/latest/beta/Dockerfile.${docker_os}.openjdk${jdkVersion}"
             findCommandAndReplace "FROM ibm-semeru-runtimes:open-${jdkVersion}-jre-jammy" "FROM local-ibm-semeru-runtimes:latest" $libertyDockerfilePath '/'
@@ -140,7 +155,7 @@ buildImage() {
     echo "build image at $(pwd)..."
     sudo podman build -t local-ibm-semeru-runtimes:latest -f Dockerfile.open.releases.full . --build-arg DOCKER_REGISTRY_CREDENTIALS_USR=$DOCKER_REGISTRY_CREDENTIALS_USR --build-arg DOCKER_REGISTRY_CREDENTIALS_PSW=$DOCKER_REGISTRY_CREDENTIALS_PSW 2>&1 | tee build_semeru_image.log 
     # Temporarily OpenLiberty ubi dockerfile only supports openjdk 17, not 11, need to add jdkVersion for ubuntu support later
-    sudo podman build -t icr.io/appcafe/open-liberty:beta-instanton -f ci.docker/releases/latest/beta/Dockerfile.${docker_os}.openjdk17 ci.docker/releases/latest/beta
+    sudo podman build -t icr.io/appcafe/open-liberty:beta-instanton -f ci.docker/releases/latest/beta/Dockerfile.${docker_os}.openjdk21 ci.docker/releases/latest/beta
     sudo podman build -t ol-instanton-test-pingperf:latest -f Dockerfile.pingperf .
 }
 

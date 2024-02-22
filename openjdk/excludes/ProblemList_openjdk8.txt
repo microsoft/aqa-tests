@@ -46,6 +46,8 @@ compiler/8209951/TestCipherBlockChainingEncrypt.java https://github.com/adoptium
 gc/g1/TestHumongousCodeCacheRoots.java https://github.com/adoptium/aqa-tests/issues/2818 aix-all,linux-arm
 gc/whitebox/TestConcMarkCycleWB.java https://bugs.openjdk.java.net/browse/JDK-8067368 linux-arm
 gc/metaspace/TestMetaspaceMemoryPool.java https://github.com/adoptium/aqa-tests/issues/2708 generic-all
+gc/ergonomics/TestDynamicNumberOfGCThreads.java https://github.com/adoptium/aqa-tests/issues/5019 linux-arm
+gc/class_unloading/TestG1ClassUnloadingHWM.java https://github.com/adoptium/aqa-tests/issues/5019 linux-arm
 gc/TestMemoryMXBeansAndPoolsPresence.java https://github.com/adoptium/aqa-tests/issues/3297 linux-arm
 gc/g1/mixedgc/TestOldGenCollectionUsage.java https://github.com/adoptium/aqa-tests/issues/3297 linux-arm
 gc/g1/Test2GbHeap.java https://github.com/adoptium/aqa-tests/issues/3297 linux-arm
@@ -146,7 +148,7 @@ sun/management/jmxremote/bootstrap/RmiSslNoKeyStoreTest.sh https://github.com/ad
 # alpine-linux https://github.com/adoptium/aqa-tests/issues/3238
 sun/management/jmxremote/bootstrap/CustomLauncherTest.java https://bugs.openjdk.java.net/browse/JDK-8031420 linux-all
 com/sun/management/OperatingSystemMXBean/TestTotalSwap.java https://bugs.openjdk.java.net/browse/JDK-8255263 linux-all
-
+sun/management/jmxremote/startstop/JMXStartStopTest.java https://bugs.openjdk.org/browse/JDK-8274337 generic-all
 ############################################################################
 
 # jdk_jmx
@@ -261,7 +263,7 @@ sun/security/ssl/SSLSocketImpl/AsyncSSLSocketClose.java https://bugs.openjdk.org
 
 # jdk_security3
 
-sun/security/lib/cacerts/VerifyCACerts.java https://github.com/adoptium/aqa-tests/issues/2123 generic-all
+sun/security/lib/cacerts/VerifyCACerts.java https://github.com/adoptium/aqa-tests/issues/4808 generic-all
 sun/security/pkcs11/Secmod/TestNssDbSqlite.java https://github.com/adoptium/aqa-tests/issues/2123 generic-all
 sun/security/ssl/X509TrustManagerImpl/Symantec/Distrust.java https://github.com/adoptium/aqa-tests/issues/2123 generic-all
 sun/security/tools/jarsigner/diffend.sh https://github.com/adoptium/infrastructure/issues/2623 linux-all
@@ -287,15 +289,6 @@ sun/security/krb5/auto/Unreachable.java https://github.com/adoptium/aqa-tests/is
 
 # jdk_security_infra
 
-security/infra/java/security/cert/CertPathValidator/certification/GoogleCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/AmazonCA.java https://bugs.openjdk.org/browse/JDK-8309088 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/BuypassCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/QuoVadisCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/EntrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/DTrustCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-security/infra/java/security/cert/CertPathValidator/certification/HaricaCA.java https://github.com/adoptium/aqa-tests/issues/2074 generic-all
-
 ############################################################################
 # jdk_sound
 
@@ -309,13 +302,7 @@ javax/sound/midi/Devices/InitializationHang.java https://github.com/adoptium/aqa
 
 # jdk_text
 
-java/text/BreakIterator/BreakIteratorTest.java https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
-java/text/Format/DateFormat/DateFormatTest.java https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
-java/text/Format/DateFormat/NonGregorianFormatTest.java https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
-java/text/Format/MessageFormat/LargeMessageFormat.java https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
-java/text/Format/NumberFormat/NumberRegression.java https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
-java/text/Format/NumberFormat/NumberTest.java https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
-sun/text/IntHashtable/Bug4170614Test.sh https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
+java/text/BreakIterator/BreakIteratorTest.java https://bugs.openjdk.org/browse/JDK-8229922 generic-all
 
 ############################################################################
 
@@ -373,13 +360,10 @@ com/sun/jdi/PrivateTransportTest.sh https://github.com/adoptium/aqa-tests/issues
 # jdk_util
 
 java/util/Arrays/TimSortStackSize2.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x
-java/util/Calendar/CalendarRegression.java https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
-java/util/Calendar/JapanEraNameCompatTest.java https://bugs.openjdk.java.net/browse/JDK-8218781 generic-all
 java/util/Locale/LocaleProviders.sh https://github.com/adoptium/aqa-tests/issues/1261 windows-all
 java/util/Random/RandomTest.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x
 java/util/ResourceBundle/Control/Bug6530694.java https://github.com/adoptium/aqa-tests/issues/137 macosx-all
 java/util/Spliterator/SpliteratorTraversingAndSplittingTest.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x
-java/util/TimeZone/HongKong.java https://bugs.openjdk.java.net/browse/JDK-8031145 generic-all
 java/util/concurrent/locks/Lock/TimedAcquireLeak.java https://github.com/adoptium/aqa-tests/issues/1259 macosx-all
 java/util/logging/TestLoggerWeakRefLeak.java https://github.com/adoptium/aqa-tests/issues/1259 macosx-all
 java/util/stream/boottest/java/util/stream/SpinedBufferTest.java https://github.com/adoptium/aqa-tests/issues/1051 linux-s390x

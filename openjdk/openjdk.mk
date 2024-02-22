@@ -19,8 +19,38 @@ OS:=$(shell uname -s)
 ARCH:=$(shell uname -m)
 
 ifeq ($(OS),Linux)
-	NPROCS:=$(shell grep -c ^processor /proc/cpuinfo)
-	MEMORY_SIZE:=$(shell KMEMMB=`awk '/^MemTotal:/{print int($$2/1024)}' /proc/meminfo`; if [ -r /sys/fs/cgroup/memory/memory.limit_in_bytes ]; then CGMEM=`cat /sys/fs/cgroup/memory/memory.limit_in_bytes`; else CGMEM=`expr $${KMEMMB} \* 1024`; fi; CGMEMMB=`expr $${CGMEM} / 1024`; if [ "$${KMEMMB}" -lt "$${CGMEMMB}" ]; then echo "$${KMEMMB}"; else echo "$${CGMEMMB}"; fi)
+	NPROCS:=$(shell nproc)
+	# This is the MEMORY_SIZE script below, with formatting for readability.
+	#
+	# // The number of megabytes of memory this machine has.
+	# KMEMMB=`awk '/^MemTotal:/{print int($$2/1024)}' /proc/meminfo`; 
+	#
+	# // If this machine/container uses cgroups to limit the amount of 
+	# // memory available to us, we should use that as out memory size.
+	# if [[ -r /sys/fs/cgroup/memory.max ]]; then
+	#     // Use this to identify memory maximum (bytes) for cgroup v2.
+	#     CGMEM=`cat /sys/fs/cgroup/memory.max 2>1`; 
+	# else
+	#     // Else use this file for memory maximum (bytes) on cgroup v1.
+	#     CGMEM=`cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>1`; 
+	# fi; 
+	#
+	# // If those files were empty, or didn't exist, or had non-numbers
+	# // in them, then use /proc/meminfo (converted to bytes).
+	# if [[ ! $$(CGMEM) =~ ^[0-9]+$$ ]]; then
+	#     CGMEM=`expr $${KMEMMB} \* 1024 \* 1024`; 
+	# fi; 
+	#
+	# CGMEMMB=`expr $${CGMEM} / 1024 / 1024`; 
+	#
+	# // Between memory limits in the cgroup and memory on the machine,
+	# // use the lower limit. This protects us against situations
+	# // where the cgroup has a value which is much bigger/smaller than
+	# // the limits on the machine overall. We've seen both.
+	# if [ "$${KMEMMB}" -lt "$${CGMEMMB}" ]; then 
+	#     echo "$${KMEMMB}"; else echo "$${CGMEMMB}"; 
+	# fi
+	MEMORY_SIZE:=$(shell KMEMMB=`awk '/^MemTotal:/{print int($$2/1024)}' /proc/meminfo`; if [[ -r /sys/fs/cgroup/memory.max ]]; then CGMEM=`cat /sys/fs/cgroup/memory.max 2>1`; else CGMEM=`cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>1`; fi; if [[ ! $${CGMEM} =~ ^[0-9]+$$ ]]; then CGMEM=`expr $${KMEMMB} \* 1024 \* 1024`; fi; CGMEMMB=`expr $${CGMEM} / 1024 / 1024`; if [ "$${KMEMMB}" -lt "$${CGMEMMB}" ]; then echo "$${KMEMMB}"; else echo "$${CGMEMMB}"; fi)
 endif
 ifeq ($(OS),Darwin)
 	NPROCS:=$(shell sysctl -n hw.ncpu)
@@ -79,11 +109,16 @@ JTREG_BASIC_OPTIONS += -retain:fail,error,*.dmp,javacore.*,heapdump.*,*.trc
 # Ignore tests are not run and completely silent about it
 JTREG_IGNORE_OPTION = -ignore:quiet
 JTREG_BASIC_OPTIONS += $(JTREG_IGNORE_OPTION)
+# riscv64 machines aren't very fast (yet!!)
+ifeq ($(ARCH), riscv64)
+	JTREG_TIMEOUT_OPTION = -timeoutFactor:16
+else
 # Multiple by 8 the timeout numbers, except on zOS use 2
 ifneq ($(OS),OS/390)
 	JTREG_TIMEOUT_OPTION =  -timeoutFactor:8
 else
 	JTREG_TIMEOUT_OPTION =  -timeoutFactor:2
+endif
 endif
 JTREG_BASIC_OPTIONS += $(JTREG_TIMEOUT_OPTION)
 # Create junit xml
@@ -201,7 +236,7 @@ endif
 FEATURE_PROBLEM_LIST_FILE:=
 ifneq (,$(findstring FIPS140_2, $(TEST_FLAG))) 
 	FEATURE_PROBLEM_LIST_FILE:=-exclude:$(Q)$(JTREG_JDK_TEST_DIR)$(D)ProblemList-FIPS140_2.txt$(Q)
-else ifneq (,$(findstring FIPS140_3_OpenJcePlus, $(TEST_FLAG)))
+else ifneq (,$(findstring FIPS140_3_OpenJCEPlus, $(TEST_FLAG)))
 	FEATURE_PROBLEM_LIST_FILE:=-exclude:$(Q)$(JTREG_JDK_TEST_DIR)$(D)ProblemList-FIPS140_3_OpenJcePlus.txt$(Q)
 endif
 
