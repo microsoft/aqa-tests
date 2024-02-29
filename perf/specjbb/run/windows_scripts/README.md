@@ -8,7 +8,7 @@ This guide encompasses information on the use of automation scripts designed for
 
 1. Composite Mode Script (`run_composite.bat`): Automates the benchmark execution in Composite mode, where the Controller, TxInjector, and Backend are launched within a single JVM.
 
-2. MultiJVM Mode Script (`run_multijvm.bat`): Facilitates running the Controller, TxInjectors, and Backends in separate JVMs on the same server, ideal for testing distributed setups or when isolating components is required.
+2. MultiJVM Mode Script (`run_multijvm.bat`): Facilitates running the Controller, TxInjectors, and Backends in separate JVMs on the same server.
 
 ## Features
 
@@ -45,7 +45,7 @@ The documentation and scripts are designed with extensibility in mind. Additiona
 
 ## Troubleshooting
 
-- **Java Executable Not Found**: Ensure the JAVA_PATH in the configuration file correctly points to your Java installation. Alternatively, verify Java's path is included in the system's PATH environment variable.
-- **Memory Allocation Errors**: Review the JAVA_OPTS settings within the configuration file. Adjust them according to your system's memory availability and the benchmark's requirements.
+- **Java Executable Not Found**: Ensure the `JAVA_PATH` in the configuration file correctly points to your Java installation. Alternatively, verify Java's path is included in the system's `PATH` environment variable.
+- **Memory Allocation Errors**: Review the `JAVA_OPTS` settings within the configuration file. Adjust them according to your system's memory availability and the benchmark's requirements.
 
 For additional assistance, refer to the SPECjbb2015 [documentation](https://spec.org/jbb2015/) and ensure your Java installation meets the benchmark's prerequisites.
