@@ -1,3 +1,4 @@
+@echo off
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Sample script for running SPECjbb2015 in Composite mode.
 :: 
@@ -5,27 +6,22 @@
 :: Backend in a single JVM.
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-@echo off
+:: Load settings from configuration file
+for /F "tokens=1,2 delims==" %%a in (specjbb2015.config) do (
+    if "%%a"=="SPEC_OPTS" set SPEC_OPTS=%%b
+    if "%%a"=="JAVA_OPTS" set JAVA_OPTS=%%b
+    if "%%a"=="MODE_ARGS" set MODE_ARGS=%%b
+    if "%%a"=="NUM_OF_RUNS" set NUM_OF_RUNS=%%b
+    if "%%a"=="JAVA_PATH" set JAVA=%%b
+)
 
-:: Launch command: java [options] -jar specjbb2015.jar -m COMPOSITE [argument] [value] ...
-
-:: Benchmark options (-Dproperty=value to override the default and property file value)
-:: Please add -Dspecjbb.controller.host=$CTRL_IP (this host IP) and -Dspecjbb.time.server=true
-:: when launching Composite mode in virtual environment with Time Server located on the native host.
-set SPEC_OPTS=
-
-:: Java options for Composite JVM
-::set JAVA_OPTS=-Xmx28g -Xms28g -Xmn22g -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -Xlog:gc*:file=..\gclogs\sergcfull.txt
-set JAVA_OPTS=-Xmx28g -Xms28g -Xmn25g -XX:+UseParallelGC -XX:ParallelGCThreads=1 -Xlog:gc*,gc+ref=debug,gc+phases=debug,gc+age=trace,safepoint:file=../../gclogs/pargc.log -XX:-UseAdaptiveSizePolicy -XX:-UsePerfData -XX:+AlwaysPreTouch -XX:+UseLargePages -XX:LargePageSizeInBytes=1073741824 -Xlog:pagesize=trace:file=pagesize.txt::filecount=0 -Xlog:os=trace:file=os.txt::filecount=0
-::set JAVA_OPTS=-Xmx28g -Xms28g -Xmn22g -XX:MetaspaceSize=10g -XX:+UseParallelGC -XX:TieredStopAtLevel=2 -XX:Tier2BackEdgeThreshold=40000 -XX:Tier2CompileThreshold=15000 -XX:-UseBiasedLocking -XX:ParallelGCThreads=32 -Xlog:gc*,gc+task=trace,gc+ref=debug,gc+ergo*=trace,gc+heap=debug:file=..\gclogs\pargcfull-%p-%t.txt -Xlog:safepoint*:file=..\gclogs\pargcfull-safepoints-%p-%t.txt
-
-
-
-:: Optional arguments for the Composite mode (-l <num>, -p <file>, -skipReport, etc.)
-set MODE_ARGS=-ikv
-
-:: Number of successive runs
-set NUM_OF_RUNS=1
+:: Validate JAVA_PATH
+@set JAVAPATH=
+@for %%J in ("%JAVA%") do (@set JAVAPATH=%%~$PATH:J)
+@if not defined JAVAPATH (
+    echo ERROR: 'java' executable not found. Ensure JAVA_PATH in specjbb2015config.txt is correct.
+    exit /b 1
+)
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: This benchmark requires a JDK7 compliant Java VM.  If such a JVM is not on
@@ -38,51 +34,21 @@ set NUM_OF_RUNS=1
 ::                       https://spec.org/jbb2015/docs/knownissues.html
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-::@set JAVA=C:\projects\jdks\jdk_minimal\bin\java.exe
-@set JAVA=java.exe
-@set JAVAPATH=
-@for %%J in (%JAVA%) do (@set JAVAPATH=%%~$PATH:J)
+:: Main benchmark execution loop
+set /a counter=1
+while %counter% leq %NUM_OF_RUNS% do (
+    echo Running SPECjbb2015 run #%counter%...
 
-@if not defined JAVAPATH (
-   echo ERROR: Could not find a 'java' executable. Please set the JAVA environment variable or update the PATH.
-   exit /b 1
-) else (
-   @set JAVA="%JAVAPATH%"
+    :: Create result directory based on current timestamp
+    set timestamp=%DATE:~-4%-%DATE:~4,2%-%DATE:~7,2%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%
+    set resultDir=result_%timestamp%
+    mkdir "%resultDir%"
+
+    :: Execute the benchmark
+    %JAVA% %JAVA_OPTS% -jar specjbb2015.jar -m COMPOSITE %MODE_ARGS% > "%resultDir%\composite_%counter%.log" 2>&1
+
+    echo Run #%counter% completed.
+    set /a counter+=1
 )
 
-set counter=1
-:LOOP
-
-:: Create result directory
-set timestamp=%DATE:~12,2%-%DATE:~4,2%-%DATE:~7,2%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%
-set result=result\%timestamp: =0%
-mkdir %result%\config
-
-:: Copy current config to the result directory
-copy config %result%\config >nul
-
-cd %result%
-
-echo Run %counter%: %result%
-echo Launching SPECjbb2015 in Composite mode...
-echo.
-
-echo Start Composite JVM
-echo Please monitor %result%\composite.out for progress
-@echo on
-%JAVA% %SPEC_OPTS% %JAVA_OPTS% -jar ..\..\specjbb2015.jar -m COMPOSITE %MODE_ARGS% 2>composite.log > composite.out
-@echo off
-
-echo.
-echo Composite JVM has stopped
-echo SPECjbb2015 has finished
-echo.
-
-cd ..\..
-
-IF %counter% == %NUM_OF_RUNS% GOTO END
-set /a counter=%counter + 1
-GOTO LOOP
-:END
-
-exit /b 0
+echo All runs completed.
