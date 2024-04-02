@@ -264,6 +264,7 @@ java/nio/channels/Channels/TransferTo.java https://github.com/eclipse-openj9/ope
 java/nio/channels/DatagramChannel/AdaptorBasic.java https://github.ibm.com/runtimes/backlog/issues/741 generic-all
 java/nio/channels/DatagramChannel/AdaptorMulticasting.java https://github.ibm.com/runtimes/backlog/issues/655 linux-s390x,windows-all,macosx-all
 java/nio/channels/DatagramChannel/AfterDisconnect.java https://github.com/adoptium/aqa-tests/issues/1650 aix-all
+java/nio/channels/DatagramChannel/BasicMulticastTests.java https://github.ibm.com/runtimes/backlog/issues/1053 macosx-all
 java/nio/channels/DatagramChannel/ChangingAddress.java https://github.com/adoptium/aqa-tests/issues/1650 aix-all
 java/nio/channels/DatagramChannel/ConnectedSend.java https://github.ibm.com/runtimes/backlog/issues/741 generic-all
 java/nio/channels/DatagramChannel/Disconnect.java https://github.ibm.com/runtimes/backlog/issues/741 generic-all
@@ -287,6 +288,7 @@ java/nio/channels/etc/NetworkChannelTests.java https://github.ibm.com/runtimes/b
 java/nio/channels/FileChannel/LargeGatheringWrite.java https://github.ibm.com/runtimes/backlog/issues/684 generic-all
 java/nio/channels/FileChannel/Transfer.java https://github.ibm.com/runtimes/backlog/issues/741 generic-all
 java/nio/channels/FileChannel/TransferTo6GBFile.java https://github.ibm.com/runtimes/backlog/issues/741 generic-all
+java/nio/channels/Pipe/PipeInterrupt.java https://github.com/eclipse-openj9/openj9/issues/18479 windows-all
 java/nio/channels/Selector/Alias.java https://github.ibm.com/runtimes/backlog/issues/741 generic-all
 java/nio/channels/Selector/BasicAccept.java https://github.ibm.com/runtimes/backlog/issues/741 generic-all
 java/nio/channels/Selector/BasicConnect.java https://github.ibm.com/runtimes/backlog/issues/741 generic-all
@@ -335,11 +337,15 @@ java/nio/channels/vthread/BlockingChannelOps.java#id1 https://github.com/adoptiu
 java/rmi/activation/Activatable/checkAnnotations/CheckAnnotations https://github.com/eclipse-openj9/openj9/issues/6749 windows-all
 java/rmi/dgc/dgcAckFailure/DGCAckFailure.java https://github.com/eclipse-openj9/openj9/issues/3347 generic-all
 java/rmi/dgc/retryDirtyCalls/RetryDirtyCalls.java https://github.com/eclipse-openj9/openj9/issues/7592 generic-all
+java/rmi/Naming/legalRegistryNames/LegalRegistryNames.java https://github.ibm.com/runtimes/backlog/issues/867 macosx-x64
+java/rmi/Naming/DefaultRegistryPort.java https://github.ibm.com/runtimes/backlog/issues/867 macosx-x64
 java/rmi/server/RemoteServer/AddrInUse.java  https://github.com/eclipse-openj9/openj9/issues/3377 generic-all
 java/rmi/server/RMISocketFactory/useSocketFactory/unicast/TCPEndpointReadBug.java https://github.com/eclipse-openj9/openj9/issues/8515 generic-all
+java/rmi/server/RMISocketFactory/useSocketFactory/unicast/UseCustomSocketFactory.java  https://github.ibm.com/runtimes/backlog/issues/1024 windows-x64
 java/rmi/server/UnicastRemoteObject/serialFilter/FilterUROTest.java https://github.com/eclipse-openj9/openj9/issues/3347 generic-all
 java/rmi/server/UnicastRemoteObject/unexportObject/UnexportLeak.java https://github.com/eclipse-openj9/openj9/issues/4094 generic-all
 java/rmi/server/UnicastServerRef/serialFilter/FilterUSRTest.java https://github.com/eclipse-openj9/openj9/issues/3347 generic-all
+java/rmi/server/Unreferenced/leaseCheckInterval/LeaseCheckInterval.java https://github.com/eclipse-openj9/openj9/issues/12948 windows-x64
 
 ############################################################################
 
@@ -456,6 +462,8 @@ java/util/zip/ZipFile/TestCleaner.java https://github.com/eclipse-openj9/openj9/
 
 # jdk_other
 
+com/sun/jndi/dns/ConfigTests/Timeout.java   https://github.ibm.com/runtimes/backlog/issues/1287 windows-x64,macosx-all
+com/sun/jndi/dns/ConfigTests/PortUnreachable.java   https://github.ibm.com/runtimes/backlog/issues/1287 windows-x64,macosx-all
 com/sun/jndi/ldap/LdapPoolTimeoutTest.java https://github.ibm.com/runtimes/backlog/issues/655 windows-all
 javax/rmi/ssl/SSLSocketParametersTest.java https://github.com/eclipse-openj9/openj9/issues/12168 generic-all
 jdk/dynalink/TypeConverterFactoryMemoryLeakTest.java#with_G1GC https://github.com/adoptium/aqa-tests/issues/1297 generic-all
@@ -559,4 +567,9 @@ serviceability/jvmti/vthread/FollowReferences/VThreadStackRefTest.java#no-vmcont
 serviceability/jvmti/thread/GetStackTrace/GetStackTraceAndRetransformTest/GetStackTraceAndRetransformTest.java https://github.com/eclipse-openj9/openj9/issues/18809 generic-all
 
 # jdk_container
+jdk/internal/platform/docker/TestDockerBasic.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all
 jdk/internal/platform/docker/TestDockerCpuMetrics.java https://github.com/eclipse-openj9/openj9/issues/16462 generic-all
+jdk/internal/platform/docker/TestDockerMemoryMetrics.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all
+jdk/internal/platform/docker/TestGetFreeSwapSpaceSize.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all
+jdk/internal/platform/docker/TestLimitsUpdating.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all
+jdk/internal/platform/docker/TestPidsLimit.java https://github.com/eclipse-openj9/openj9/issues/19176 linux-all

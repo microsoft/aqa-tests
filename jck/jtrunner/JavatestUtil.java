@@ -486,7 +486,7 @@ public class JavatestUtil {
 			if (spec.contains("win")) {
 				libPath = "PATH";
 				robotAvailable = "Yes";
-			} else if (spec.contains("alpine-linux")) {
+			} else if (spec.contains("alpine-linux") || spec.contains("riscv64")) {
 				libPath = "LD_LIBRARY_PATH";
 				robotAvailable = "No";
 			} else if (spec.contains("linux")) {
@@ -532,7 +532,7 @@ public class JavatestUtil {
 			}
 
 			if ( testsRequireDisplay(tests) ) {
-				if (spec.contains("zos") || spec.contains("alpine-linux")) {
+				if (spec.contains("zos") || spec.contains("alpine-linux") || spec.contains("riscv")) {
 					fileContent += "set jck.env.testPlatform.headless Yes" + ";\n";
 				}
 				else {
