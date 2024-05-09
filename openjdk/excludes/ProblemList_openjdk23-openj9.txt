@@ -95,6 +95,7 @@ java/lang/StackWalker/VerifyStackTrace.java https://github.com/adoptium/aqa-test
 java/lang/String/CaseConvertSameInstance.java https://github.com/eclipse-openj9/openj9/issues/6672 generic-all
 java/lang/String/CaseInsensitiveComparator.java https://github.com/eclipse-openj9/openj9/issues/6665 generic-all
 java/lang/String/CompactString/IndexOf.java  https://github.com/eclipse-openj9/openj9/issues/6673 generic-all
+java/lang/String/CompactString/MaxSizeUTF16String.java https://github.com/eclipse-openj9/openj9/issues/19309 generic-all
 java/lang/String/EqualsIgnoreCase.java https://github.com/eclipse-openj9/openj9/issues/6666 generic-all
 java/lang/String/UnicodeCasingTest.java https://github.com/eclipse-openj9/openj9/issues/4597 linux-s390x
 java/lang/StringBuffer/HugeCapacity.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
@@ -128,6 +129,7 @@ jdk/internal/vm/Continuation/Basic.java#id1 https://github.com/eclipse-openj9/op
 jdk/internal/vm/Continuation/ClassUnloading.java https://github.com/eclipse-openj9/openj9/issues/15152 generic-all
 jdk/internal/vm/Continuation/Fuzz.java https://github.com/eclipse-openj9/openj9/issues/15247 generic-all
 jdk/internal/vm/Continuation/LiveFramesDriver.java https://github.com/eclipse-openj9/openj9/issues/15152 generic-all
+jdk/internal/vm/Continuation/OSRTest.java https://github.com/eclipse-openj9/openj9/issues/19357 generic-all
 jdk/internal/vm/Continuation/Scoped.java https://github.com/eclipse-openj9/openj9/issues/15163 generic-all
 jdk/modules/incubator/ImageModules.java https://github.com/adoptium/aqa-tests/issues/1267 macosx-all
 jni/nullCaller/NullCallerTest.java https://github.com/eclipse-openj9/openj9/issues/15370 linux-ppc64le,macosx-all
@@ -441,6 +443,10 @@ java/util/concurrent/locks/Lock/TimedAcquireLeak.java https://github.com/eclipse
 java/util/concurrent/locks/Lock/OOMEInAQS.java https://github.com/eclipse-openj9/openj9/issues/16659 generic-all
 java/util/concurrent/SynchronousQueue/Fairness.java https://github.com/eclipse-openj9/openj9/issues/18771 generic-all
 java/util/concurrent/TimeUnit/Basic.java https://github.com/adoptium/aqa-tests/issues/1665 windows-all
+java/util/concurrent/tck/JSR166TestCase.java#default https://github.com/eclipse-openj9/openj9/issues/19304 generic-all
+java/util/concurrent/tck/JSR166TestCase.java#forkjoinpool-common-parallelism https://github.com/eclipse-openj9/openj9/issues/19304 generic-all
+java/util/concurrent/tck/JSR166TestCase.java#others https://github.com/eclipse-openj9/openj9/issues/19304 generic-all
+java/util/concurrent/tck/JSR166TestCase.java#security-manager https://github.com/eclipse-openj9/openj9/issues/19304 generic-all
 java/util/logging/CheckZombieLockTest.java https://bugs.openjdk.java.net/browse/JDK-8148972 macosx-all,linux-all
 java/util/logging/LogManager/TestLoggerNames.java https://github.com/eclipse-openj9/openj9/issues/4561 generic-all
 java/util/logging/TestLoggerWeakRefLeak.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
@@ -500,7 +506,6 @@ java/foreign/stackwalk/TestStackWalk.java#zgc https://github.com/eclipse-openj9/
 java/foreign/upcalldeopt/TestUpcallDeopt.java https://github.com/eclipse-openj9/openj9/issues/13157 generic-all
 java/foreign/TestIllegalLink.java https://github.com/eclipse-openj9/openj9/issues/14002 generic-all
 java/foreign/TestUnsupportedPlatform.java https://github.com/eclipse-openj9/openj9/issues/14828 generic-all
-java/foreign/TestHandshake.java https://github.com/eclipse-openj9/openj9/issues/13211 generic-all
 java/foreign/valist/VaListTest.java https://github.com/adoptium/aqa-tests/issues/1297 generic-all
 
 java/foreign/TestStubAllocFailure.java https://github.com/eclipse-openj9/openj9/issues/18938 generic-all
