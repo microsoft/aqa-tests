@@ -14,32 +14,25 @@
 -->
 <playlist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../TKG/resources/playlist.xsd">
 	<test>
-		<testCaseName>TestHeadlessComponents</testCaseName>
+		<testCaseName>tck-ubi-test</testCaseName>
+		<command> $(TEST_ROOT)$(D)external$(D)external.sh --run --tag "${DOCKERIMAGE_TAG}" --dir tck-ubi-test --testtarget "_testList TESTLIST=jck-runtime-api-javax_annotation" --reportdst $(REPORTDIR) --docker_args "$(EXTRA_DOCKER_ARGS) -v ${BUILD_ROOT}/external/tck-ubi-test/jck_root/JCK${JDK_VERSION}-unzipped:/opt/jck_root/unzipped -v $(TEST_ROOT):/opt/test_root"; \
+		$(TEST_STATUS); \
+		$(TEST_ROOT)$(D)external$(D)external.sh --clean --tag "${DOCKERIMAGE_TAG}" --dir tck-ubi-test
+		</command>
 		<disables>
 			<disable>
-				<comment>https://github.com/adoptium/aqa-tests/issues/5224</comment>
-				<impl>openj9</impl>
-			</disable>
-			<disable>
-				<comment>https://github.com/adoptium/aqa-tests/issues/5224</comment>
-				<impl>ibm</impl>
+				<comment>Only applicable on xlinux, plinux, alinux, and zlinux atm</comment>
+				<platform>^((?!(x86-64_linux|ppc64le_linux|aarch64_linux|s390x_linux)).)*$</platform>
 			</disable>
 		</disables>
-		<command>
-			export OJDK_VERSION_NUMBER=$(JDK_VERSION) JREJDK="jdk" TMPRESULTS=$(Q)$(REPORTDIR)$(D)report$(Q); \
-			bash $(TEST_ROOT)$(D)functional$(D)testHeadlessComponents$(D)TestHeadlessComponents$(D)testHeadlessComponents.sh; \
-			$(TEST_STATUS)
-		</command>
+		<impls>
+			<impl>openj9</impl>
+		</impls>
 		<levels>
-			<level>dev</level>
+			<level>special</level>
 		</levels>
 		<groups>
-			<group>functional</group>
+			<group>external</group>
 		</groups>
-		<platformRequirementsList>
-			<platformRequirements>os.linux</platformRequirements>
-			<platformRequirements>os.win</platformRequirements>
-			<platformRequirements>os.osx</platformRequirements>
-		</platformRequirementsList>
 	</test>
 </playlist>

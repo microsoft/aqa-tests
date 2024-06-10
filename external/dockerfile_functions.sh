@@ -75,12 +75,13 @@ sanitize_test_names() {
 
 print_image_args() {
     local file=$1
-    local os=$2
-    local version=$3
-    local vm=$4
-    local package=$5
-    local build=$6
-    local base_docker_registry_dir="$7"
+    local test=$2
+    local os=$3
+    local version=$4
+    local vm=$5
+    local package=$6
+    local build=$7
+    local base_docker_registry_dir="$8"
 
     image_name="eclipse-temurin"
     tag=""
@@ -93,8 +94,11 @@ print_image_args() {
         if  [[ "${os}" == "ubuntu" ]]; then
             image_name="docker.io/ibm-semeru-runtimes"
             tag=open-${tag}
+        elif [[ "${os}" == *"ubi"* && "${test}" != *"criu"* ]]; then
+            image_name="registry.access.redhat.com/$base_docker_registry_dir"
+            tag="latest"
         else
-            # os is ubi
+            # os is ubi, and test is criu
             # temporarily all ubi based testing use internal base image
             image_name="$DOCKER_REGISTRY_URL/$base_docker_registry_dir"
             tag="latest"
@@ -162,6 +166,18 @@ print_jdk_install() {
             "\n\t  *x86-64*) \\" \
             "\n\t     BUILD_ID_LAST_SUCCESS=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_x86-64_linux_Nightly/lastSuccessfulBuild/buildNumber); \\" \
             "\n\t     BINARY_URL=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_x86-64_linux_Nightly/lastSuccessfulBuild/consoleText | grep -Po \"(?<=Deploying artifact: )https://openj9-artifactory.osuosl.org/artifactory/ci-openj9/Build_JDK11_x86-64_linux_Nightly/\${BUILD_ID_LAST_SUCCESS}/OpenJ9-JDK11-x86-64_linux.*tar.gz\"); \\" \
+            "\n\t     ;; \\" \
+            "\n\t  *aarch64*) \\" \
+            "\n\t     BUILD_ID_LAST_SUCCESS=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_aarch64_linux_Nightly/lastSuccessfulBuild/buildNumber); \\" \
+            "\n\t     BINARY_URL=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_aarch64_linux_Nightly/lastSuccessfulBuild/consoleText | grep -Po \"(?<=Deploying artifact: )https://openj9-artifactory.osuosl.org/artifactory/ci-openj9/Build_JDK11_aarch64_linux_Nightly/\${BUILD_ID_LAST_SUCCESS}/OpenJ9-JDK11-aarch64_linux.*tar.gz\"); \\" \
+            "\n\t     ;; \\" \
+            "\n\t  *390*) \\" \
+            "\n\t     BUILD_ID_LAST_SUCCESS=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_s390x_linux_Nightly/lastSuccessfulBuild/buildNumber); \\" \
+            "\n\t     BINARY_URL=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_s390x_linux_Nightly/lastSuccessfulBuild/consoleText | grep -Po \"(?<=Deploying artifact: )https://openj9-artifactory.osuosl.org/artifactory/ci-openj9/Build_JDK11_s390x_linux_Nightly/\${BUILD_ID_LAST_SUCCESS}/OpenJ9-JDK11-s390x_linux.*tar.gz\"); \\" \
+            "\n\t     ;; \\" \
+            "\n\t  *ppc*) \\" \
+            "\n\t     BUILD_ID_LAST_SUCCESS=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_ppc64le_linux_Nightly/lastSuccessfulBuild/buildNumber); \\" \
+            "\n\t     BINARY_URL=\$(wget -qO- https://openj9-jenkins.osuosl.org/job/Build_JDK11_ppc64le_linux_Nightly/lastSuccessfulBuild/consoleText | grep -Po \"(?<=Deploying artifact: )https://openj9-artifactory.osuosl.org/artifactory/ci-openj9/Build_JDK11_ppc64le_linux_Nightly/\${BUILD_ID_LAST_SUCCESS}/OpenJ9-JDK11-ppc64le_linux.*tar.gz\"); \\" \
             "\n\t     ;; \\" \
             "\n\t  *) \\" \
             "\n\t     echo \"Unsupported platform \"; \\" \
@@ -441,10 +457,10 @@ print_environment_variable() {
 
 print_home_path() {
     local file=$1
-    local github_url=$2
+    local aqa_tests_repo=$2
 
     # Get Github folder name
-    local folder="$(echo ${github_url} | awk -F'/' '{print $NF}' | sed 's/.git//g')"
+    local folder="$(echo ${aqa_tests_repo} | awk -F'/' '{print $NF}' | sed 's/.git//g')"
     echo -e "ENV TEST_HOME /${folder}\n" >> ${file}
 }
 
@@ -490,28 +506,29 @@ print_testInfo_env() {
             "\nENV JDK_VERSION=${version}" \
             "\nENV JDK_IMPL=${vm}" \
             "\n" >> ${file}
+    echo -e "\nENV USE_TESTENV_PROPERTIES ${USE_TESTENV_PROPERTIES} \n" >> ${file}
 }
 
 print_clone_project() {
     local file=$1
     local test=$2
-    local github_url=$3
+    local aqa_tests_repo=$3
+    local aqa_tests_branch=$4
 
     # Cause Test name to be capitalized
     test_tag="$(sanitize_test_names ${test} | tr a-z A-Z)_TAG"
-    git_branch_tag="master"
-    if [[ "$test_tag" != *"CRIU"* ]]; then
-        git_branch_tag=$test_tag
+    if [[ "$test_tag" != *"CRIU"* && "$test_tag" != *"TCK"* ]]; then
+        aqa_tests_branch=$test_tag
     fi
 
     # Get Github folder name
-    folder="$(echo ${github_url} | awk -F'/' '{print $NF}' | sed 's/.git//g')"
+    folder="$(echo ${aqa_tests_repo} | awk -F'/' '{print $NF}' | sed 's/.git//g')"
 
     echo -e "# Clone ${test} source" \
             "\nENV ${test_tag}=\$${test_tag}" \
-            "\nRUN git clone ${github_url}" \
+            "\nRUN git clone ${aqa_tests_repo}" \
             "\nWORKDIR /${folder}/" \
-            "\nRUN git checkout \$${git_branch_tag}" \
+            "\nRUN git checkout ${aqa_tests_branch}" \
             "\nWORKDIR /" \
             "\n" >> ${file}
 }
@@ -586,7 +603,7 @@ generate_dockerfile() {
     echo -n "Writing ${file} ... "
     print_legal ${file};
     print_adopt_test ${file} ${test};
-    print_image_args ${file} ${os} ${version} ${vm} ${package} ${build} "${base_docker_registry_dir}";
+    print_image_args ${file} ${test} ${os} ${version} ${vm} ${package} ${build} "${base_docker_registry_dir}";
     print_result_comment_arg ${file};
     print_test_tag_arg ${file} ${test} ${tag_version};
     print_${os}_pkg ${file} "${!packages}";
@@ -640,9 +657,9 @@ generate_dockerfile() {
         print_test_results ${file};
     fi
 
-    print_home_path ${file} ${github_url};
+    print_home_path ${file} ${ADOPTOPENJDK_REPO};
     print_testInfo_env ${test} ${tag_version} ${os} ${version} ${vm}
-    print_clone_project ${file} ${test} ${github_url};
+    print_clone_project ${file} ${test} ${ADOPTOPENJDK_REPO} ${ADOPTOPENJDK_BRANCH} ;
     print_test_files ${file} ${test} ${localPropertyFile};
 
     if [[ "$check_external_custom_test" == "1" ]]; then

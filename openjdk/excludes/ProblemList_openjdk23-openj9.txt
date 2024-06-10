@@ -134,6 +134,7 @@ jdk/internal/vm/Continuation/Scoped.java https://github.com/eclipse-openj9/openj
 jdk/modules/incubator/ImageModules.java https://github.com/adoptium/aqa-tests/issues/1267 macosx-all
 jni/nullCaller/NullCallerTest.java https://github.com/eclipse-openj9/openj9/issues/15370 linux-ppc64le,macosx-all
 java/lang/Thread/jni/AttachCurrentThread/AttachTest.java#id1 https://github.com/eclipse-openj9/openj9/issues/17399 generic-all
+sun/misc/UnsafeMemoryAccessWarnings.java https://github.com/eclipse-openj9/openj9/issues/19583 generic-all
 
 ############################################################################
 
@@ -228,6 +229,12 @@ java/net/MulticastSocket/Test.java https://github.com/adoptium/infrastructure/is
 java/net/Socket/asyncClose/AsyncClose.java https://github.com/eclipse-openj9/openj9/issues/4560 generic-all
 java/net/SocketPermission/SocketPermissionTest.java https://github.com/adoptium/aqa-tests/issues/1650 aix-all
 jdk/net/ExtendedSocketOption/DontFragmentTest.java https://github.com/adoptium/aqa-tests/issues/3637 linux-all
+
+############################################################################
+
+# jdk_imageio
+
+javax/imageio/plugins/jpeg/JPEGsNotAcceleratedTest.java https://github.com/eclipse-openj9/openj9/issues/19527 windows-all
 
 ############################################################################
 
@@ -375,6 +382,7 @@ sun/security/mscapi/CngCipher.java 	https://github.ibm.com/runtimes/backlog/issu
 sun/security/mscapi/InteropWithSunRsaSign.java	https://github.ibm.com/runtimes/backlog/issues/795	windows-all
 sun/security/mscapi/KeyAlgorithms.java	https://github.ibm.com/runtimes/backlog/issues/795	windows-all
 sun/security/mscapi/KeyStoreEmptyCertChain.java	https://github.ibm.com/runtimes/backlog/issues/795	windows-all
+sun/security/mscapi/NonAsciiAlias.java https://github.com/eclipse-openj9/openj9/issues/19528 windows-all
 sun/security/mscapi/PublicKeyInterop.java	https://github.ibm.com/runtimes/backlog/issues/795	windows-all
 sun/security/mscapi/RSAEncryptDecrypt.java	https://github.ibm.com/runtimes/backlog/issues/795	windows-all
 sun/security/mscapi/SetDupNameEntry.java 	https://github.ibm.com/runtimes/backlog/issues/795	windows-all
