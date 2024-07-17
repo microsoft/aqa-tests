@@ -8,7 +8,7 @@ def makeTest(testParam) {
 	// Note: keyword source cannot be used in Jenkins script. Therefore, using "." instead.
 	String makeTestCmd = "$RESOLVED_MAKE;cd ./aqa-tests; . ./scripts/testenv/testenvSettings.sh;cd ./TKG; \$MAKE $testParam"
 	//unset LD_LIBRARY_PATH workaround for issue https://github.com/adoptium/infrastructure/issues/2934
-	if (JDK_IMPL == 'hotspot' && JDK_VERSION == '8' && PLATFORM.contains('alpine-linux')) {
+	if (JDK_IMPL == 'hotspot' && PLATFORM.contains('alpine-linux')) {
 		makeTestCmd = "unset LD_LIBRARY_PATH; $makeTestCmd"
 	}
 	try {
@@ -106,6 +106,7 @@ def setupEnv() {
 	env.EXIT_SUCCESS = params.EXIT_SUCCESS ? params.EXIT_SUCCESS : false
 	NUM_MACHINES = params.NUM_MACHINES ? params.NUM_MACHINES.toInteger() : 1
 	env.LIB_DIR = JOB_NAME.contains("SmokeTests") ? "${WORKSPACE}/../../../../../testDependency/lib" : "${WORKSPACE}/../../testDependency/lib"
+	env.SYSTEM_LIB_DIR = JOB_NAME.contains("SmokeTests") ? "${WORKSPACE}/../../../../../testDependency/system_lib" : "${WORKSPACE}/../../testDependency/system_lib"
 	env.OPENJCEPLUS_GIT_REPO = params.OPENJCEPLUS_GIT_REPO ?: "https://github.com/ibmruntimes/OpenJCEPlus.git"
 	env.OPENJCEPLUS_GIT_BRANCH = params.OPENJCEPLUS_GIT_BRANCH ?: "semeru-java${params.JDK_VERSION}"
 
@@ -211,6 +212,10 @@ def setupParallelEnv() {
 					def customUrl = getCustomUrl()
 					if (PLATFORM.contains("windows")) {
 						env.LIB_DIR = env.LIB_DIR.replaceAll("\\\\", "/")
+						env.SYSTEM_LIB_DIR = env.SYSTEM_LIB_DIR.replaceAll("\\\\", "/")
+					}
+					if (env.BUILD_LIST == 'system') {
+						env.LIB_DIR = env.SYSTEM_LIB_DIR
 					}
 					sh "perl ./aqa-tests/TKG/scripts/getDependencies.pl -path ${env.LIB_DIR} -task default -customUrl ${customUrl}"
 				}
@@ -321,7 +326,7 @@ def setupParallelEnv() {
 def genParallelList(PARALLEL_OPTIONS) {
 	String unsetLLP = ""
 	//unset LD_LIBRARY_PATH workaround for issue https://github.com/adoptium/infrastructure/issues/2934
-	if (JDK_IMPL == 'hotspot' && JDK_VERSION == '8' && PLATFORM.contains('alpine-linux')) {
+	if (JDK_IMPL == 'hotspot' && PLATFORM.contains('alpine-linux')) {
 		unsetLLP = "unset LD_LIBRARY_PATH;"
 	}
 	sh "cd ./aqa-tests/TKG; ${unsetLLP} make genParallelList ${PARALLEL_OPTIONS}"
@@ -505,6 +510,8 @@ def setup() {
 		VENDOR_TEST_BRANCHES = (params.VENDOR_TEST_BRANCHES) ? "--vendor_branches \"${params.VENDOR_TEST_BRANCHES}\"" : ""
 		VENDOR_TEST_DIRS = (params.VENDOR_TEST_DIRS) ? "--vendor_dirs \"${params.VENDOR_TEST_DIRS}\"" : ""
 		VENDOR_TEST_SHAS = (params.VENDOR_TEST_SHAS) ? "--vendor_shas \"${params.VENDOR_TEST_SHAS}\"" : ""
+		env.IS_SVT_TESTREPO = (params.VENDOR_TEST_REPOS  && params.VENDOR_TEST_REPOS.contains('SVTTestRepo')) ? true : false
+		echo "IS_SVT_TESTREPO is set to ${env.IS_SVT_TESTREPO}"
 
 		// handle three cases (true/false/null) in params.TEST_IMAGES_REQUIRED and params.DEBUG_IMAGES_REQUIRED
 		// Only set image required to false if params is set to false. In get.sh, the default value is true
@@ -614,7 +621,7 @@ def get_sources() {
 def makeCompileTest(){
 	String makeTestCmd = "bash ./compile.sh"
 	//unset LD_LIBRARY_PATH workaround for issue https://github.com/adoptium/infrastructure/issues/2934
-	if (JDK_IMPL == 'hotspot' && JDK_VERSION == '8' && PLATFORM.contains('alpine-linux')) {
+	if (JDK_IMPL == 'hotspot' && PLATFORM.contains('alpine-linux')) {
 		makeTestCmd = "unset LD_LIBRARY_PATH; $makeTestCmd"
 	}
 	dir('aqa-tests') {
@@ -652,32 +659,24 @@ def buildTest() {
 		}
 
 		try {
-			// check pre-stage test libs on the machine
-			// check for each lib. If lib does not exist, donwload it.
-			// If lib exists, SHA will be checked. Re-download if SHA does not match.
-			timeout(time: 20, unit: 'MINUTES') {
-				def customUrl = getCustomUrl()
-				if (PLATFORM.contains("windows")) {
-					env.LIB_DIR = env.LIB_DIR.replaceAll("\\\\", "/")
+				// check pre-stage test libs on the machine
+				// check for each lib. If lib does not exist, donwload it.
+				// If lib exists, SHA will be checked. Re-download if SHA does not match.
+				timeout(time: 20, unit: 'MINUTES') {
+					def customUrl = getCustomUrl()
+					if (PLATFORM.contains("windows")) {
+						env.LIB_DIR = env.LIB_DIR.replaceAll("\\\\", "/")
+						env.SYSTEM_LIB_DIR = env.SYSTEM_LIB_DIR.replaceAll("\\\\", "/")
+					}
+					if (env.BUILD_LIST == 'system') {
+						env.LIB_DIR = env.SYSTEM_LIB_DIR
+					}
+					sh "perl ./aqa-tests/TKG/scripts/getDependencies.pl -path ${env.LIB_DIR} -task default -customUrl ${customUrl}"
 				}
-				sh "perl ./aqa-tests/TKG/scripts/getDependencies.pl -path ${env.LIB_DIR} -task default -customUrl ${customUrl}"
+			} catch (Exception e) {
+					echo 'Exception: ' + e.toString()
+					echo "Cannot pre-stage test libs from ${env.LIB_DIR} on the machine. Skipping..."
 			}
- 		} catch (Exception e) {
-			echo 'Exception: ' + e.toString()
-			echo "Cannot pre-stage test libs from ${env.LIB_DIR} on the machine. Skipping..."
-		}
-
-		try {
-			if (env.BUILD_LIST.contains('system')) {
-				//get pre-staged test jars from systemtest.getDependency build before system test compilation
-				timeout(time: 60, unit: 'MINUTES') {
-					copyArtifacts fingerprintArtifacts: true, projectName: "systemtest.getDependency", selector: lastSuccessful(), target: 'aqa-tests'
-				}
-			}
-		} catch (Exception e) {
-			echo 'Exception: ' + e.toString()
-			echo 'Cannot run copyArtifacts from test.getDependency/systemtest.getDependency. Skipping copyArtifacts...'
-		}
 
 		if (BUILD_LIST.contains("external")){
 			try {
@@ -1267,6 +1266,7 @@ def addFailedTestsGrinderLink(paths=""){
 		if (failedTestList) {
 			String failedTests = failedTestList.substring(0, failedTestList.length() - 1)
 			env.FAILED_TESTS= failedTests ?: ""
+			env.RERUN_TESTCASES=""
 			failedTestList = "testList+TESTLIST=" + failedTests
 			String url = env.RERUN_LINK
 			def failedTestUrl = url.replace(env.FAILED_TEST_TARGET, "TARGET=$failedTestList")
@@ -1287,6 +1287,17 @@ def addFailedTestsGrinderLink(paths=""){
 			}
 			if (jckDevtoolsFailedTestCaseList) {
 				customizedTestCases['jckdevtools'] = "${jckDevtoolsFailedTestCaseList}"
+			}
+			
+			if (customizedTestCases.size() == 1) {
+				def testCases=customizedTestCases.values().first()
+				def customTarget=customizedTestCases.keySet().first()
+				def testCaseSize=testCases.count(' ')
+				// Limitation of Header Fields https://github.com/adoptium/aqa-tests/issues/5241#issuecomment-2161927014
+				if (testCaseSize < 80) {
+					env.RERUN_CUSTOMTARGET="${customTarget}_custom"
+					env.RERUN_TESTCASES="${testCases}"
+				}
 			}
 			customizedTestCases.each { target, testcases ->
 				def tempTestCases = testcases.substring(0, testcases.length() - 1)
@@ -1343,7 +1354,21 @@ def triggerRerunJob () {
 						// set PARALLEL, NUM_MACHINES and TEST_TIME to default values
 						// set TARGET to failed tests and set ITERATIONS to rerunIterations
 						if (param.key == "TARGET") {
-							childParams << string(name: param.key, value: "testList TESTLIST=" + env.FAILED_TESTS)
+							if (env.RERUN_TESTCASES) {
+								childParams << string(name: param.key, value: env.RERUN_CUSTOMTARGET)
+							} else {
+								if (env.FAILED_TESTS.contains("_custom")) {
+									childParams << string(name: param.key, value: env.FAILED_TESTS)
+								} else {
+									childParams << string(name: param.key, value: "testList TESTLIST=" + env.FAILED_TESTS)
+								}
+							}
+						} else if (param.key == "CUSTOM_TARGET") {
+							if (env.RERUN_TESTCASES) {
+								childParams << string(name: param.key, value: env.RERUN_TESTCASES)
+							} else {
+								childParams << string(name: param.key, value: param.value.toString())
+							}
 						} else if (param.key == "PARALLEL") {
 							childParams << string(name: param.key, value: "None")
 						} else if (param.key == "NUM_MACHINES") {

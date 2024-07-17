@@ -50,26 +50,6 @@ java/lang/String/StringRepeat.java#id1 https://github.com/adoptium/aqa-tests/iss
 # java/lang/ProcessBuilder/Basic.java#id0 https://bugs.openjdk.org/browse/JDK-8245748 linux-all
 java/lang/ProcessBuilder/Basic.java#id0 https://github.com/adoptium/aqa-tests/issues/4155 windows-aarch64,linux-all
 java/lang/ProcessBuilder/Basic.java#id1 https://bugs.openjdk.org/browse/JDK-8245748 linux-all
-java/lang/invoke/VarHandles/VarHandleTestAccessBoolean.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestAccessByte.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestAccessChar.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestAccessDouble.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestAccessFloat.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestAccessInt.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestAccessLong.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestAccessShort.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestAccessString.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestByteArrayAsDouble.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestByteArrayAsFloat.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessBoolean.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessByte.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessChar.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessDouble.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessFloat.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessInt.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessLong.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessShort.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
-java/lang/invoke/VarHandles/VarHandleTestMethodHandleAccessString.java https://github.com/adoptium/infrastructure/issues/1118 linux-aarch64
 
 ############################################################################
 
@@ -252,8 +232,9 @@ java/util/concurrent/TimeUnit/Basic.java https://github.com/adoptium/aqa-tests/i
 
 ############################################################################
 
-# jvm_compiler
+# hotspot_compiler
 
+compiler/arguments/CheckCICompilerCount.java https://github.com/adoptium/aqa-tests/issues/5378 windows-x86
 compiler/arraycopy/TestCloneAccess.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/arraycopy/TestCloneAccessStressGCM.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/c2/cr6340864/TestByteVect.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
@@ -263,8 +244,6 @@ compiler/c2/cr6340864/TestIntVect.java https://github.com/adoptium/aqa-tests/iss
 compiler/c2/cr6340864/TestLongVect.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/c2/cr6340864/TestShortVect.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/c2/TestReplaceEquivPhis.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
-compiler/codegen/TestCharVect2.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
-compiler/loopopts/TestUnswitchCloneSkeletonPredicates.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/loopopts/TestRemoveEmptyCountedLoop.java https://bugs.openjdk.org/browse/JDK-8311964 windows-x86
 compiler/loopstripmining/AntiDependentLoadInOuterStripMinedLoop.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/loopstripmining/LoadDependsOnIfIdenticalToLoopExit.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
@@ -274,7 +253,6 @@ compiler/intrinsics/unsafe/HeapByteBufferTest.java#id1 https://github.com/adopti
 compiler/loopopts/superword/TestPeeledReductionNode.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/rangechecks/RangeCheckEliminationScaleNotOne.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/tiered/Level2RecompilationTest.java https://github.com/adoptium/aqa-tests/issues/2671 windows-x86
-compiler/vectorization/TestVectorsNotSavedAtSafepoint.java https://github.com/adoptium/aqa-tests/issues/2382 windows-x86
 compiler/graalunit/ApiDirectivesTest.java https://github.com/adoptium/aqa-tests/issues/2804 generic-all
 compiler/graalunit/ApiTest.java https://github.com/adoptium/aqa-tests/issues/2804 generic-all
 compiler/graalunit/AsmAarch64Test.java https://github.com/adoptium/aqa-tests/issues/2804 generic-all
@@ -348,3 +326,34 @@ build/AbsPathsInImage.java https://github.com/adoptium/aqa-tests/issues/3234 lin
 # jdk_container/hotspot_container
 
 containers/docker/TestMemoryWithCgroupV1.java https://bugs.openjdk.org/browse/JDK-8297274 linux-all
+
+############################################################################
+
+# hotspot_gc
+
+gc/shenandoah/compiler/TestBarrierAboveProj.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+gc/shenandoah/jni/CriticalNativeStress.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+
+############################################################################
+
+# hotspot_runtime
+
+runtime/cds/appcds/LambdaEagerInit.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+runtime/jni/nativeStack/TestNativeStack.java https://github.com/adoptium/aqa-tests/issues/5384 aix-all
+runtime/logging/loadLibraryTest/LoadLibraryTest.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+runtime/NMT/HugeArenaTracking.java https://github.com/adoptium/aqa-tests/issues/5384 aix-all
+runtime/os/TestHugePageDecisionsAtVMStartup.java#THP_enabled https://bugs.openjdk.org/browse/JDK-8324580 linux-all
+
+############################################################################
+
+# hotspot_serviceability
+
+serviceability/dcmd/jvmti/AttachFailed/AttachReturnError.java https://github.com/adoptium/aqa-tests/issues/5384 aix-all
+serviceability/dtrace/DTraceOptionsTest.java#enabled https://github.com/adoptium/aqa-tests/issues/5397 linux-s390x
+serviceability/jvmti/HeapMonitor/MyPackage/HeapMonitorStatArrayCorrectnessTest.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+serviceability/sa/CDSJMapClstats.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+serviceability/sa/ClhsdbFindPC.java#id0 https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+serviceability/sa/ClhsdbFindPC.java#id1 https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+serviceability/sa/ClhsdbJhisto.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+serviceability/sa/ClhsdbJstackXcompStress.java https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
+serviceability/sa/ClhsdbJstack.java#id0 https://github.com/adoptium/aqa-tests/issues/5378  windows-x86
