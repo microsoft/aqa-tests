@@ -7,6 +7,7 @@ function show_help() {
     echo "  --numa              Check NUMA settings"
     echo "  --disable-smt       Temporarily disable SMT"
     echo "  --set-performance   Set CPU governor to performance"
+    echo "  --disable-turbo     Disable Turbo Boost (Intel), Turbo Core (AMD), or ARM equivalent"
     echo "  --clear-cache       Clear memory caches"
     echo "  --sync-disks        Sync disks to flush pending writes"
     echo "  --set-thp           Set Transparent HugePages (THP) to madvise"
@@ -77,6 +78,38 @@ function set_cpu_performance() {
     echo "============================================================="
 }
 
+# Disable Turbo Boost (Intel), Turbo Core (AMD), or ARM equivalent
+function disable_turbo() {
+    echo "============================================================="
+    echo "Disabling Turbo Boost/Turbo Core/ARM equivalent"
+
+    # Detect CPU and disable the corresponding turbo feature
+    if grep -q "Intel" /proc/cpuinfo; then
+        if [ -f /sys/devices/system/cpu/intel_pstate/no_turbo ]; then
+            echo 1 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo > /dev/null
+            echo "Intel Turbo Boost disabled."
+        else
+            echo "ERROR: Unable to disable Intel Turbo Boost. Unsupported system or kernel."
+            exit 1
+        fi
+    elif grep -q "AMD" /proc/cpuinfo; then
+        if [ -f /sys/devices/system/cpu/cpufreq/boost ]; then
+            echo 0 | sudo tee /sys/devices/system/cpu/cpufreq/boost > /dev/null
+            echo "AMD Turbo Core disabled."
+        else
+            echo "ERROR: Unable to disable AMD Turbo Core. Unsupported system or kernel."
+            exit 1
+        fi
+    elif grep -q "ARM" /proc/cpuinfo; then
+        echo "Note: ARM CPUs may not have an equivalent to Turbo Boost, but CPU frequency governors may manage performance."
+    else
+        echo "ERROR: Unsupported CPU architecture."
+        exit 1
+    fi
+
+    echo "============================================================="
+}
+
 # Sync disks to flush pending writes
 function sync_disks() {
     echo "============================================================="
@@ -129,6 +162,7 @@ function parse_arguments() {
                 --numa) check_numa ;;
                 --disable-smt) disable_smt ;;
                 --set-performance) set_cpu_performance ;;
+                --disable-turbo) disable_turbo ;;
                 --clear-cache) clear_cache ;;
                 --sync-disks) sync_disks ;;
                 --set-thp) set_thp_madvise ;;
@@ -146,6 +180,7 @@ function run_all() {
     check_numa
     disable_smt
     set_cpu_performance
+    disable_turbo
     sync_disks
     clear_cache
     set_thp_madvise
