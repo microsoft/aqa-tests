@@ -19,15 +19,23 @@ function show_help() {
 function check_numa() {
     echo "=========================================================="
     echo "Checking NUMA settings with numactl"
+    if ! command -v numactl &> /dev/null; then
+        echo "WARNING: numactl is not installed or not found. Skipping NUMA check."
+        return 0  # Skip without error
+    fi
     if ! numactl --show; then
         echo "ERROR: Failed to run numactl."
-        exit 1
+        return 1  # Non-critical error, continue script
     fi
     echo "=========================================================="
 }
 
 # Get the current SMT state
 function get_smt_state() {
+    if [ ! -f /sys/devices/system/cpu/smt/control ]; then
+        echo "WARNING: SMT control is not available on this system."
+        return 1
+    fi
     cat /sys/devices/system/cpu/smt/control
 }
 
@@ -36,9 +44,14 @@ function disable_smt() {
     echo "============================================================="
     echo "Disabling SMT"
     
+    if [ ! -f /sys/devices/system/cpu/smt/control ]; then
+        echo "WARNING: SMT control is not supported on this system. Skipping SMT disable."
+        return 0  # Skip without error
+    fi
+
     if ! echo off | sudo tee /sys/devices/system/cpu/smt/control > /dev/null; then
         echo "ERROR: Failed to disable SMT."
-        exit 1
+        return 1
     fi
 
     echo "SMT state after disabling: $(get_smt_state)"
@@ -73,8 +86,17 @@ function set_cpu_performance() {
         exit 1
     fi
 
-    echo "CPU Governor set to performance"
-    cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+    # Apply "performance" governor to all CPUs and avoid redundant prints
+    for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+        current_governor=$(cat "$cpu")
+        if [ "$current_governor" != "performance" ]; then
+            if ! echo performance | sudo tee "$cpu" > /dev/null 2>&1; then
+                echo "WARNING: Unable to set performance governor for $cpu."
+            fi
+        fi
+    done
+
+    echo "All applicable CPUs have been set to performance mode."
     echo "============================================================="
 }
 
@@ -89,22 +111,22 @@ function disable_turbo() {
             echo 1 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo > /dev/null
             echo "Intel Turbo Boost disabled."
         else
-            echo "ERROR: Unable to disable Intel Turbo Boost. Unsupported system or kernel."
-            exit 1
+            echo "WARNING: Unable to disable Intel Turbo Boost. Unsupported system or kernel."
+            return 0  # Skip without error
         fi
     elif grep -q "AMD" /proc/cpuinfo; then
         if [ -f /sys/devices/system/cpu/cpufreq/boost ]; then
             echo 0 | sudo tee /sys/devices/system/cpu/cpufreq/boost > /dev/null
             echo "AMD Turbo Core disabled."
         else
-            echo "ERROR: Unable to disable AMD Turbo Core. Unsupported system or kernel."
-            exit 1
+            echo "WARNING: Unable to disable AMD Turbo Core. Unsupported system or kernel."
+            return 0  # Skip without error
         fi
     elif grep -q "ARM" /proc/cpuinfo; then
-        echo "Note: ARM CPUs may not have an equivalent to Turbo Boost, but CPU frequency governors may manage performance."
+        echo "Note: ARM CPUs do not have Turbo Boost/Turbo Core. Performance is managed via CPU frequency governors."
     else
         echo "ERROR: Unsupported CPU architecture."
-        exit 1
+        return 0  # Skip without error
     fi
 
     echo "============================================================="
