@@ -200,9 +200,9 @@ function parse_arguments() {
 # Run all functions
 function run_all() {
     check_numa
-    disable_smt
     set_cpu_performance
     disable_turbo
+    disable_smt
     sync_disks
     clear_cache
     set_thp_madvise
