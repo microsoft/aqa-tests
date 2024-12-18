@@ -4,7 +4,6 @@ REM ===========================================================
 REM Script for Windows System Configuration
 REM - NUMA Node Information
 REM - Power Mode Configuration
-REM Author: Nitin
 REM ===========================================================
 
 REM Parse command-line arguments
