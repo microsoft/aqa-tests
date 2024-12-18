@@ -19,10 +19,16 @@ function show_help() {
 function check_numa() {
     echo "=========================================================="
     echo "Checking NUMA settings with numactl"
+
+    # Check if numactl is installed, install it if not
     if ! command -v numactl &> /dev/null; then
-        echo "WARNING: numactl is not installed or not found. Skipping NUMA check."
-        return 0  # Skip without error
+        echo "'numactl' is not installed. Installing it now..."
+        if  ! sudo apt install  numactl; then
+            echo "ERROR: Failed to install 'numactl'. Exiting."
+            exit 1
+        fi
     fi
+
     if ! numactl --show; then
         echo "ERROR: Failed to run numactl."
         return 1  # Non-critical error, continue script
