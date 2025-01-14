@@ -71,25 +71,22 @@ for /f "tokens=4" %%G in ('powercfg -list') do (
 )
 
 if defined MODE_FOUND (
-    echo Ultimate Performance mode is already available.
+    echo Ultimate Performance mode is already available. Activating it...
+    powercfg -setactive %ULTIMATE_GUID%
+    echo Ultimate Performance mode has been set successfully.
 ) else (
-    echo Ultimate Performance mode not found. Adding it now...
+    echo Ultimate Performance mode not found. Adding and activating it now...
     powercfg -duplicatescheme %ULTIMATE_GUID%
-    echo Ultimate Performance mode added successfully.
+    powercfg -setactive %ULTIMATE_GUID%
+    echo Ultimate Performance mode added and activated successfully.
 )
 
-REM Prompt user for selection
-echo ===========================================================
-choice /c UH /n /m "Choose U for Ultimate Performance or H for High Performance: "
-if errorlevel 2 (
-    echo Setting High Performance Mode...
+REM Fallback to High Performance if Ultimate not available
+if not defined MODE_FOUND (
+    echo ===========================================================
+    echo Ultimate Performance mode could not be activated. Falling back to High Performance...
     powercfg -setactive SCHEME_MIN
-    echo High Performance mode has been set.
-)
-if errorlevel 1 (
-    echo Setting Ultimate Performance Mode...
-    powercfg -setactive %ULTIMATE_GUID%
-    echo Ultimate Performance mode has been set.
+    echo High Performance mode has been set successfully.
 )
 echo ===========================================================
 goto :end
