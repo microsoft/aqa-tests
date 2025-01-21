@@ -64,6 +64,8 @@ powercfg -list
 
 REM Check if Ultimate Performance mode exists
 set ULTIMATE_GUID=e9a42b02-d5df-448d-aa00-03f14749eb61
+set MODE_FOUND=
+
 for /f "tokens=4" %%G in ('powercfg -list') do (
     if /i "%%G"=="%ULTIMATE_GUID%" (
         set MODE_FOUND=1
@@ -71,27 +73,38 @@ for /f "tokens=4" %%G in ('powercfg -list') do (
 )
 
 if defined MODE_FOUND (
-    echo Ultimate Performance mode is already available.
+    echo Ultimate Performance mode is already available. Activating it...
+    powercfg -setactive %ULTIMATE_GUID%
+    if errorlevel 1 (
+        echo Failed to activate Ultimate Performance mode. Falling back to High Performance...
+        goto :fallback
+    )
+    echo Ultimate Performance mode has been set successfully.
+    goto :end
 ) else (
     echo Ultimate Performance mode not found. Adding it now...
     powercfg -duplicatescheme %ULTIMATE_GUID%
-    echo Ultimate Performance mode added successfully.
+    if errorlevel 1 (
+        echo Failed to add Ultimate Performance mode. Falling back to High Performance...
+        goto :fallback
+    )
+    powercfg -setactive %ULTIMATE_GUID%
+    if errorlevel 1 (
+        echo Ultimate Performance mode added but could not be activated. Falling back to High Performance...
+        goto :fallback
+    )
+    echo Ultimate Performance mode added and activated successfully.
+    goto :end
 )
 
-REM Prompt user for selection
-echo ===========================================================
-choice /c UH /n /m "Choose U for Ultimate Performance or H for High Performance: "
-if errorlevel 2 (
-    echo Setting High Performance Mode...
-    powercfg -setactive SCHEME_MIN
-    echo High Performance mode has been set.
-)
+:fallback
+echo Activating High Performance mode...
+powercfg -setactive SCHEME_MIN
 if errorlevel 1 (
-    echo Setting Ultimate Performance Mode...
-    powercfg -setactive %ULTIMATE_GUID%
-    echo Ultimate Performance mode has been set.
+    echo Failed to activate High Performance mode. Please check system settings.
+) else (
+    echo High Performance mode has been set successfully.
 )
-echo ===========================================================
 goto :end
 
 REM Run both functions
